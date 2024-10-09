@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import RecipeCard from '../UI/RecipeCard';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import RecipeCard from "../UI/RecipeCard";
 
 // Define a type for the recipe data
 type Recipe = {
@@ -31,11 +37,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('../../assets/data/recipes.json'); // Update with the correct path
+        const response = await fetch("../../assets/data/recipes.json"); // Update with the correct path
         const data: Recipe[] = await response.json(); // Explicitly type the data
         setRecipes(data); // Set the recipes state
       } catch (error) {
-        console.error('Error fetching recipes:', error);
+        console.error("Error fetching recipes:", error);
       }
     };
 
@@ -49,7 +55,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const handleRecipeSelect = (recipe: Recipe) => {
     console.log(recipe);
-    navigation.navigate('Ingredients', { recipe }); // Navigate to Ingredients screen
+    navigation.navigate("Ingredients", { recipe }); // Navigate to Ingredients screen
   };
 
   return (
@@ -61,11 +67,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Featured</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {recipes.slice(0, 5).map(recipe => (
-            <TouchableOpacity key={recipe.recipe_name} style={styles.featuredCard} onPress={() => handleRecipeSelect(recipe)}>
+          {recipes.slice(0, 5).map((recipe) => (
+            <TouchableOpacity
+              key={recipe.recipe_name}
+              style={styles.featuredCard}
+              onPress={() => handleRecipeSelect(recipe)}
+            >
               <RecipeCard
                 recipe={recipe}
-                onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_name)} 
+                onFavoriteToggle={() =>
+                  handleFavoriteToggle(recipe.recipe_name)
+                }
                 isFavorite={false} // Update as necessary based on favorite state
               />
             </TouchableOpacity>
@@ -75,7 +87,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Category</Text>
         <View style={styles.categoryContainer}>
-          {['All', 'Lunch', 'Dinner', 'Snack'].map(category => (
+          {["All", "Lunch", "Dinner", "Snack"].map((category) => (
             <TouchableOpacity key={category} style={styles.categoryButton}>
               <Text>{category}</Text>
             </TouchableOpacity>
@@ -84,12 +96,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Popular Recipes</Text>
-        <ScrollView horizontal>
-          {recipes.slice(0, 5).map(recipe => (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {recipes.slice(0, 5).map((recipe) => (
             <RecipeCard
               key={recipe.recipe_name}
               recipe={recipe}
-              onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_name)} 
+              onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_name)}
               isFavorite={false} // Update as necessary based on favorite state
             />
           ))}
@@ -97,12 +109,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recommended Just for You</Text>
-        <ScrollView horizontal>
-          {recipes.slice(0, 5).map(recipe => (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {recipes.slice(0, 5).map((recipe) => (
             <RecipeCard
               key={recipe.recipe_name}
               recipe={recipe}
-              onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_name)} 
+              onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_name)}
               isFavorite={false} // Update as necessary based on favorite state
             />
           ))}
@@ -113,14 +125,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: "#fff" },
   header: { padding: 20 },
-  greeting: { fontSize: 24, fontWeight: 'bold' },
-  question: { fontSize: 16, color: '#666' },
+  greeting: { fontSize: 24, fontWeight: "bold" },
+  question: { fontSize: 16, color: "#666" },
   section: { marginVertical: 10, padding: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  categoryContainer: { flexDirection: 'row', justifyContent: 'space-between' },
-  categoryButton: { padding: 10, backgroundColor: '#f0f0f0', borderRadius: 10 },
+  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+  categoryContainer: { flexDirection: "row", justifyContent: "space-between" },
+  categoryButton: { padding: 10, backgroundColor: "#f0f0f0", borderRadius: 10 },
   featuredCard: {
     marginRight: 10, // Space between cards
     width: 300, // Fixed width for featured cards
