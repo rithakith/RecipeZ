@@ -4,20 +4,16 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 
-// Import your screens
 import LandingScreen from "@/components/Screens/LandingScreen";
-import LoginScreen from "@/components/Screens/LoginScreen";
-import SignUpScreen from "@/components/Screens/SignUpScreen";
 import HomeScreen from "@/components/Screens/HomeScreen";
 import IngredientsScreen from "@/components/Screens/IngredientsScreen";
 import SearchScreen from "@/components/Screens/SearchScreen";
 
-// Define types for navigation
 type RootStackParamList = {
   Landing: undefined;
   Login: undefined;
   SignUp: undefined;
-  HomeScreen: undefined;
+  Home: undefined;
   Ingredients: { recipe: any };
 };
 
@@ -26,7 +22,6 @@ type TabParamList = {
   Search: undefined;
 };
 
-// Create navigators
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -34,7 +29,7 @@ const HomeStack: React.FC = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="HomeScreen"
+        name="MainHome" // Changed name to avoid conflict
         component={HomeScreen}
         options={{ headerShown: false }}
       />
@@ -52,7 +47,7 @@ const TabNavigator: React.FC = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName: string;
+          let iconName: keyof typeof Ionicons.glyphMap;
           if (route.name === "Home") {
             iconName = "home";
           } else if (route.name === "Search") {
@@ -68,7 +63,7 @@ const TabNavigator: React.FC = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeStack}
+        component={HomeStack} // This remains the same
         options={{ title: "Home" }}
       />
       <Tab.Screen
@@ -80,34 +75,21 @@ const TabNavigator: React.FC = () => {
   );
 };
 
-const Layout: React.FC = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Landing">
-        {/* Landing screen as the initial screen */}
-        <Stack.Screen
-          name="Landing"
-          component={LandingScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={TabNavigator}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
+const Layout: React.FC = () => (
+  <NavigationContainer independent={true}>
+    <Stack.Navigator initialRouteName="Landing">
+      <Stack.Screen
+        name="Landing"
+        component={LandingScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Home"
+        component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
 
 export default Layout;

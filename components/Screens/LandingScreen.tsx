@@ -12,8 +12,8 @@ const LandingScreen: React.FC<LandingScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to RecipeZ</Text>
-      <Button title="Log In" onPress={() => navigation.navigate("Login")} />
-      <Button title="Sign Up" onPress={() => navigation.navigate("SignUp")} />
+      <Button title="Log In" onPress={() => navigation.navigate("Home")} />
+      <Button title="Sign Up" onPress={() => navigation.navigate("Home")} />
     </View>
   );
 };
