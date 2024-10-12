@@ -12,7 +12,7 @@ import RecipeCard from "../UI/RecipeCard";
 type Recipe = {
   recipe_id: number;
   title: string;
-  image: string;
+  images: string;
   cook_time: number; // Adjusted to match your API structure
   rating: number;
   reviews: number;
@@ -48,11 +48,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         const response = await fetch("http://localhost:8083/api/recipes"); // Fetch from the API
         const data: Recipe[] = await response.json(); // Explicitly type the data
         console.log("data", data);
+        console.log("recipe image",typeof(data[0].images[0].url), data[0].images[0].url);
         // Process data to fit the expected structure
         const processedData = data.map((recipe) => ({
+          
           recipe_id: recipe.recipe_id,
           title: recipe.title,
-          // image: recipe.images[0]?.url || '', // Get the first image URL
+          images: recipe.images[0].url|| '', // Get the first image URL
           cook_time: recipe.cook_time,
           // rating: recipe.ratings.average_rating,
           // reviews: recipe.ratings.rating_count,
@@ -66,7 +68,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           ingredients: recipe.ingredients.map((ingredient) => ingredient.name), // Only keep ingredient names
           steps: recipe.steps,
         }));
-
+ 
         setRecipes(processedData); // Set the recipes state
       } catch (error) {
         console.error("Error fetching recipes:", error);
