@@ -8,13 +8,13 @@ import LandingScreen from "@/components/Screens/LandingScreen";
 import HomeScreen from "@/components/Screens/HomeScreen";
 import IngredientsScreen from "@/components/Screens/IngredientsScreen";
 import SearchScreen from "@/components/Screens/SearchScreen";
+import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
 
 type RootStackParamList = {
   Landing: undefined;
-  Login: undefined;
-  SignUp: undefined;
   Home: undefined;
   Ingredients: { recipe: any };
+  DetailInquiry: undefined;
 };
 
 type TabParamList = {
@@ -37,6 +37,11 @@ const HomeStack: React.FC = () => {
         name="Ingredients"
         component={IngredientsScreen}
         options={{ title: "Recipe Details" }}
+      />
+      <Stack.Screen
+        name="DetailInquiry"
+        component={DetailInquiryScreen}
+        options={{ title: "Detail Inquiry" }} // Add title for the screen
       />
     </Stack.Navigator>
   );
@@ -87,6 +92,11 @@ const Layout: React.FC = () => (
         name="Home"
         component={TabNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="DetailInquiry"
+        component={DetailInquiryScreen}
+        options={{ title: "Detail Inquiry" }}
       />
     </Stack.Navigator>
   </NavigationContainer>
