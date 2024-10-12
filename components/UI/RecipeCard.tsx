@@ -8,6 +8,8 @@ type Recipe = {
   image: string;
   calories: number;
   cook_time: string;
+
+  
 };
 
 type RecipeCardProps = {
@@ -20,7 +22,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onFavoriteToggle, isFav
   console.log("recipeimg", recipe);
   return (
     <View style={styles.card}>
-      <Image source={{ uri: recipe.image }} style={styles.image} />
+      <Image source={{ uri: recipe.images }} style={styles.image} />
       <Text style={styles.title}>{recipe.title}</Text>
       <Text style={styles.details}>Calories: {recipe.calories}</Text>
       <Text style={styles.details}>Cook Time: {recipe.cook_time}</Text>
