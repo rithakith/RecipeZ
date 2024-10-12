@@ -10,17 +10,25 @@ import RecipeCard from "../UI/RecipeCard";
 
 // Define a type for the recipe data
 type Recipe = {
-  recipe_name: string;
+  recipe_id: number;
+  title: string;
   image: string;
-  time: string;
+  cook_time: number; // Adjusted to match your API structure
   rating: number;
   reviews: number;
   description: string;
-  carbs: number;
-  proteins: number;
-  kcal: number;
-  fats: number;
-  ingredients: string[];
+  nutrition: {
+    carbohydrates: number;
+    protein: number;
+    calories: number;
+    fat: number;
+  };
+  ingredients: {
+    name: string;
+    unit: string;
+    quantity: number;
+    preparation?: string;
+  }[];
   steps: string[];
 };
 
@@ -37,9 +45,29 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("../../assets/data/recipes.json"); // Update with the correct path
+        const response = await fetch("http://localhost:8083/api/recipes"); // Fetch from the API
         const data: Recipe[] = await response.json(); // Explicitly type the data
-        setRecipes(data); // Set the recipes state
+        console.log("data", data);
+        // Process data to fit the expected structure
+        const processedData = data.map((recipe) => ({
+          recipe_id: recipe.recipe_id,
+          title: recipe.title,
+          // image: recipe.images[0]?.url || '', // Get the first image URL
+          cook_time: recipe.cook_time,
+          // rating: recipe.ratings.average_rating,
+          // reviews: recipe.ratings.rating_count,
+          description: recipe.description,
+          nutrition: {
+            carbohydrates: recipe.nutrition.carbohydrates,
+            protein: recipe.nutrition.protein,
+            calories: recipe.nutrition.calories,
+            fat: recipe.nutrition.fat,
+          },
+          ingredients: recipe.ingredients.map((ingredient) => ingredient.name), // Only keep ingredient names
+          steps: recipe.steps,
+        }));
+
+        setRecipes(processedData); // Set the recipes state
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }
@@ -69,14 +97,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {recipes.slice(0, 5).map((recipe) => (
             <TouchableOpacity
-              key={recipe.recipe_name}
+              key={recipe.recipe_id}
               style={styles.featuredCard}
               onPress={() => handleRecipeSelect(recipe)}
             >
               <RecipeCard
                 recipe={recipe}
                 onFavoriteToggle={() =>
-                  handleFavoriteToggle(recipe.recipe_name)
+                  handleFavoriteToggle(recipe.title)
                 }
                 isFavorite={false} // Update as necessary based on favorite state
               />
@@ -99,9 +127,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {recipes.slice(0, 5).map((recipe) => (
             <RecipeCard
-              key={recipe.recipe_name}
+              key={recipe.recipe_id}
               recipe={recipe}
-              onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_name)}
+              onFavoriteToggle={() => handleFavoriteToggle(recipe.title)}
               isFavorite={false} // Update as necessary based on favorite state
             />
           ))}
@@ -112,9 +140,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {recipes.slice(0, 5).map((recipe) => (
             <RecipeCard
-              key={recipe.recipe_name}
+              key={recipe.recipe_id}
               recipe={recipe}
-              onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_name)}
+              onFavoriteToggle={() => handleFavoriteToggle(recipe.title)}
               isFavorite={false} // Update as necessary based on favorite state
             />
           ))}

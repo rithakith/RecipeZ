@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet } from 'rea
 
 // Define types for your recipe and props
 type Recipe = {
+  recipe_id: number;
   image: string;
-  recipe_name: string;
-  time: string;
+  title: string;
+  cook_time: number;
   rating: number;
   reviews: number;
   description: string;
@@ -33,8 +34,8 @@ const IngredientsScreen: React.FC<IngredientsScreenProps> = ({ route }) => {
     <ScrollView style={styles.container}>
       <Image source={{ uri: recipe.image }} style={styles.image} />
       <View style={styles.details}>
-        <Text style={styles.title}>{recipe.recipe_name}</Text>
-        <Text style={styles.time}>{recipe.time}</Text>
+        <Text style={styles.title}>{recipe.title}</Text>
+        <Text style={styles.time}>{recipe.cook_time}</Text>
         <Text style={styles.rating}>{recipe.rating} ⭐ ({recipe.reviews} Reviews)</Text>
         <Text style={styles.description}>{recipe.description}</Text>
         <View style={styles.stats}>
