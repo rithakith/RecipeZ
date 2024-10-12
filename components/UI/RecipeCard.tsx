@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 // Define a type for the recipe
 type Recipe = {
-  recipe_name: string;
+  title: string;
   image: string;
   calories: number;
   cook_time: string;
@@ -17,10 +17,11 @@ type RecipeCardProps = {
 };
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onFavoriteToggle, isFavorite }) => {
+  console.log("recipeimg", recipe);
   return (
     <View style={styles.card}>
       <Image source={{ uri: recipe.image }} style={styles.image} />
-      <Text style={styles.title}>{recipe.recipe_name}</Text>
+      <Text style={styles.title}>{recipe.title}</Text>
       <Text style={styles.details}>Calories: {recipe.calories}</Text>
       <Text style={styles.details}>Cook Time: {recipe.cook_time}</Text>
       <TouchableOpacity onPress={onFavoriteToggle}>

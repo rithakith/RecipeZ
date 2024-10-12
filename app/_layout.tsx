@@ -29,7 +29,7 @@ const HomeStack: React.FC = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="MainHome" // Changed name to avoid conflict
+        name="HomeScreen" // Changed name to avoid conflict
         component={HomeScreen}
         options={{ headerShown: false }}
       />
