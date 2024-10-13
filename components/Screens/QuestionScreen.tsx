@@ -34,7 +34,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
     {
       step: 2,
       question: "What ingredients do you currently have in your kitchen?",
-      answers: [], // No predefined answers for step 2
+      answers: [],
     },
     {
       step: 3,
