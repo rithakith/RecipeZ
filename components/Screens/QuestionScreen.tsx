@@ -5,10 +5,9 @@ import { useNavigation } from "@react-navigation/native";
 type QuestionScreenProps = {};
 
 const QuestionScreen: React.FC<QuestionScreenProps> = () => {
-  const [step, setStep] = useState(1); // Step state to track progress
+  const [step, setStep] = useState(1);
   const navigation = useNavigation();
 
-  // Sample questions for each step
   const questions = [
     {
       step: 1,
@@ -128,6 +127,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     flex: 1,
     gap: 20,
     justifyContent: "space-around",
@@ -136,6 +136,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   stepper: {
+    position: "relative",
+    top: 0,
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     borderColor: "#d3d3d3",
   },
   stepText: {
-    color: "white",
+    color: "black",
   },
   questionSection: {
     marginBottom: 20,
