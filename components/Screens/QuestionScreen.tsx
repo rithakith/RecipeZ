@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -22,22 +23,22 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
     {
       step: 1,
       topic: "Dietary Preference",
-      question: [
-        "What is your dietary preference?",
-        "Do you have any food allergies?",
-      ],
-      answers: [
-        ["Vegetarian", "Vegan", "Pescatarian", "Other"],
-        ["Gluten", "Nuts", "Dairy", "None"],
-      ],
+      question: "What is your dietary preference?",
+      answers: ["Vegetarian", "Vegan", "Pescatarian", "Other"],
     },
     {
       step: 2,
+      topic: "Food Allergies",
+      question: "Do you have any food allergies?",
+      answers: ["Gluten", "Nuts", "Dairy", "None"],
+    },
+    {
+      step: 3,
       question: "What ingredients do you currently have in your kitchen?",
       answers: [],
     },
     {
-      step: 3,
+      step: 4,
       question: "What is your primary health goal?",
       answers: ["Weight Loss", "Muscle Gain", "Maintain Weight", "Other"],
     },
@@ -46,7 +47,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
   const currentQuestion = questions.find((q) => q.step === step);
 
   const handleNext = () => {
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
       navigation.navigate("Home");
@@ -91,75 +92,51 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
       </View>
 
       {/* Display the current question */}
-      {Array.isArray(currentQuestion?.question) ? (
-        currentQuestion?.question.map((qText, questionIndex) => (
-          <View key={questionIndex} style={styles.questionSection}>
-            <Text style={styles.questionText}>{qText}</Text>
-            <View>
-              {currentQuestion?.answers[questionIndex].map((answer, index) => (
-                <TouchableOpacity key={index} style={styles.answerButton}>
-                  <Text style={styles.answerText}>{answer}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+      <Text style={styles.questionText}>{currentQuestion?.question}</Text>
+
+      {/* Handle answers for each step */}
+      {step === 3 ? (
+        <View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={inputValue}
+              onChangeText={setInputValue}
+              placeholder="Type an ingredient"
+            />
+            <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
+              <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
           </View>
-        ))
+
+          {/* Display the added ingredients */}
+          <FlatList
+            data={ingredients}
+            renderItem={renderIngredient}
+            keyExtractor={(item, index) => index.toString()}
+            style={styles.ingredientList}
+          />
+        </View>
       ) : (
-        <>
-          <Text style={styles.questionText}>{currentQuestion?.question}</Text>
-
-          {/* Step 2 input section */}
-          {step === 2 && (
-            <View>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  value={inputValue}
-                  onChangeText={setInputValue}
-                  placeholder="Type an ingredient"
-                />
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={addIngredient}
-                >
-                  <Text style={styles.addButtonText}>+</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Display the added ingredients */}
-              <FlatList
-                data={ingredients}
-                renderItem={renderIngredient}
-                keyExtractor={(item, index) => index.toString()}
-                style={styles.ingredientList}
-              />
-            </View>
-          )}
-
-          {/* Step 3 normal question */}
-          {step !== 2 && (
-            <View>
-              {currentQuestion?.answers.map((answer, index) => (
-                <TouchableOpacity key={index} style={styles.answerButton}>
-                  <Text style={styles.answerText}>{answer}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </>
+        <View>
+          {currentQuestion?.answers.map((answer, index) => (
+            <TouchableOpacity key={index} style={styles.answerButton}>
+              <Text style={styles.answerText}>{answer}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       )}
 
       {/* Navigation buttons */}
       <View style={styles.buttonSection}>
-        {step === 1 && (
+        {step === 1 ? (
           <TouchableOpacity
             style={[styles.button, styles.previousButton]}
             onPress={() => navigation.navigate("DetailInquiry")}
           >
-            <Text style={styles.buttonText}>Previous</Text>
+            <Text style={styles.buttonText}>Back</Text>
           </TouchableOpacity>
-        )}
-        {step > 1 && (
+        ) : (
           <TouchableOpacity
             style={[styles.button, styles.previousButton]}
             onPress={handlePrevious}
@@ -170,11 +147,11 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
         <TouchableOpacity
           style={[
             styles.button,
-            step === 3 ? styles.doneButton : styles.nextButton,
+            step === 4 ? styles.doneButton : styles.nextButton,
           ]}
           onPress={handleNext}
         >
-          <Text style={styles.buttonText}>{step === 3 ? "Done" : "Next"}</Text>
+          <Text style={styles.buttonText}>{step === 4 ? "Done" : "Next"}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -183,17 +160,16 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
     flex: 1,
-    gap: 20,
     justifyContent: "space-around",
-    marginTop: 50,
-    paddingBottom: 20,
     paddingHorizontal: 20,
+    paddingTop: 100,
   },
   stepper: {
-    position: "relative",
-    top: 0,
+    position: "absolute",
+    top: 80,
+    left: 20,
+    right: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -208,31 +184,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   activeStep: {
+    backgroundColor: "#042628",
+    borderColor: "#042628",
+  },
+  inactiveStep: {
     backgroundColor: "#70B9BE",
     borderColor: "#70B9BE",
   },
-  inactiveStep: {
-    backgroundColor: "white",
-    borderColor: "#d3d3d3",
-  },
   stepText: {
-    color: "black",
+    color: "white",
   },
   line: {
     flex: 1,
-    height: 1,
-    backgroundColor: "#d3d3d3",
-  },
-  questionSection: {
-    marginBottom: 20,
+    height: 10,
+    backgroundColor: "#70B9BE",
   },
   questionText: {
-    fontSize: 20,
-    marginBottom: 10,
+    fontSize: 24,
     textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "bold",
   },
   answerButton: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#",
     padding: 15,
     marginVertical: 10,
     borderRadius: 8,
@@ -244,7 +218,6 @@ const styles = StyleSheet.create({
   buttonSection: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 30,
   },
   button: {
     width: "45%",
