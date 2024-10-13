@@ -8,13 +8,14 @@ import LandingScreen from "@/components/Screens/LandingScreen";
 import HomeScreen from "@/components/Screens/HomeScreen";
 import IngredientsScreen from "@/components/Screens/IngredientsScreen";
 import SearchScreen from "@/components/Screens/SearchScreen";
-
+import RecipeCollection from "@/components/Screens/RecipeCollectionScreen";
 type RootStackParamList = {
   Landing: undefined;
   Login: undefined;
   SignUp: undefined;
   Home: undefined;
   Ingredients: { recipe: any };
+  RecipeCollection: { recipe: Recipe[], title: any };
 };
 
 type TabParamList = {
@@ -37,6 +38,11 @@ const HomeStack: React.FC = () => {
         name="Ingredients"
         component={IngredientsScreen}
         options={{ title: "Recipe Details" }}
+      />
+      <Stack.Screen
+        name="RecipeCollection"
+        component={RecipeCollection}
+        options={{ title: "Recipe filters" }}
       />
     </Stack.Navigator>
   );

@@ -1,39 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // Define a type for the recipe
 type Recipe = {
   title: string;
-  image: string;
+  images: string;
   calories: number;
   cook_time: string;
-
-  
 };
 
 type RecipeCardProps = {
   recipe: Recipe;
-  onFavoriteToggle: () => void;
-  isFavorite: boolean;
+  onFavoriteToggle: (recipeName: string) => void;
+  onRecipeSelect: (recipe: Recipe) => void;
 };
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onFavoriteToggle, isFavorite }) => {
-  console.log("recipeimg", recipe);
+const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onFavoriteToggle, onRecipeSelect }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+// console.log("image link",recipe.images[0].url);
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    onFavoriteToggle(recipe.title); // Call parent handler to update state or log
+  };
+
   return (
-    <View style={styles.card}>
-      <Image source={{ uri: recipe.images }} style={styles.image} />
+    <TouchableOpacity onPress={() => onRecipeSelect(recipe)} style={styles.card}>
+      <Image source={{ uri: recipe.images[0].url }} style={styles.image} />
       <Text style={styles.title}>{recipe.title}</Text>
       <Text style={styles.details}>Calories: {recipe.calories}</Text>
       <Text style={styles.details}>Cook Time: {recipe.cook_time}</Text>
-      <TouchableOpacity onPress={onFavoriteToggle}>
+      <TouchableOpacity onPress={toggleFavorite}>
         <Ionicons 
           name={isFavorite ? 'heart' : 'heart-outline'} 
           size={24} 
           color={isFavorite ? 'red' : 'gray'} 
         />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 };
 
