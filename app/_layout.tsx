@@ -96,7 +96,7 @@ const Layout: React.FC = () => (
       <Stack.Screen
         name="DetailInquiry"
         component={DetailInquiryScreen}
-        options={{ title: "Detail Inquiry" }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   </NavigationContainer>

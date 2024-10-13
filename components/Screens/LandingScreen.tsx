@@ -35,7 +35,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({ navigation }) => {
             style={[styles.button, styles.signUpButton]}
             onPress={() => navigation.navigate("DetailInquiry")}
           >
-            <Text style={styles.buttonText}>Sign Up</Text>
+            <Text style={styles.buttonText}>Create New Account</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -29,6 +29,7 @@ const images = [
 ];
 
 const { width } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
 const DetailInquiryScreen: React.FC<DetailInquiryScreenProps> = ({
   navigation,
@@ -76,33 +77,40 @@ const DetailInquiryScreen: React.FC<DetailInquiryScreenProps> = ({
         Explore how we help you achieve your health goals with personalized
         plans and happiness at the core.
       </Text>
-      <TouchableOpacity
-        style={[styles.button, styles.detailsButton]}
-        onPress={() => navigation.navigate("Details")}
-      >
-        <Text style={styles.buttonText}>More Details</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, styles.backButton]}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.buttonText}>Go Back</Text>
-      </TouchableOpacity>
+      {/* make the button stay in the same horizontal line */}
+      <View style={styles.buttonSection}>
+        <TouchableOpacity
+          style={[styles.button, styles.skipButton]}
+          onPress={() => navigation.navigate("Home")}
+        >
+          <Text style={styles.buttonText}>Skip</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.nextButton]}
+          onPress={() => navigation.navigate("Home")}
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: height,
+    display: "flex",
+    flexDirection: "column",
+    gap: 30,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingBottom: 40, // Space for the buttons at the bottom
+    paddingVertical: "auto",
   },
   image: {
     width,
-    height: width * 0.6, // Aspect ratio for the images
+    height: 300,
+    borderRadius: 20,
   },
   descriptionText: {
     fontSize: 18,
@@ -111,19 +119,23 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     paddingHorizontal: 10,
   },
+  buttonSection: {
+    flexDirection: "row",
+    gap: 25,
+  },
   button: {
-    width: "75%",
+    width: "35%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
     marginVertical: 10, // Space between buttons
   },
-  detailsButton: {
-    backgroundColor: "#25A7B0",
-  },
-  backButton: {
+  skipButton: {
     backgroundColor: "#042628",
+  },
+  nextButton: {
+    backgroundColor: "#70B9BE",
   },
   buttonText: {
     color: "white",
