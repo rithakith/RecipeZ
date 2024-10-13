@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Tags from "../UI/tags";
 import RecipeCard from "../UI/RecipeCard";
 
@@ -32,7 +33,6 @@ type Recipe = {
   }[];
   steps: string[];
 };
-
 const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [uniqueTags, setUniqueTags] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -45,24 +45,32 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchUniqueTags = async () => {
       try {
-        const response = await fetch("http://localhost:8083/api/uniquetags");
+        const response = await fetch("http://192.168.43.52:8083/api/uniquetags");
         const tags: string[] = await response.json();
         setUniqueTags(tags.map((tag) => tag.replace(/[^a-zA-Z0-9 ]/g, "")));
       } catch (error) {
         console.error("Error fetching unique tags:", error);
       }
     };
-    fetchUniqueTags();
 
-    const storedSearches = localStorage.getItem("previousSearches");
-    if (storedSearches) {
-      setPreviousSearches(JSON.parse(storedSearches));
-    }
+    const fetchStoredSearches = async () => {
+      try {
+        const storedSearches = await AsyncStorage.getItem("previousSearches");
+        if (storedSearches) {
+          setPreviousSearches(JSON.parse(storedSearches));
+        }
+      } catch (error) {
+        console.error("Error fetching previous searches:", error);
+      }
+    };
+
+    fetchUniqueTags();
+    fetchStoredSearches();
   }, []);
 
   const handleTagSelect = async (tag: string) => {
     try {
-      const response = await fetch(`http://localhost:8083/api/recipesbytag?tag=${tag}`);
+      const response = await fetch(`http://192.168.43.52:8083/api/recipesbytag?tag=${tag}`);
       const filteredRecipes = await response.json();
       navigation.navigate("RecipeCollection", {
         recipes: filteredRecipes,
@@ -73,13 +81,11 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
   };
 
-  // Fetch recipes based on search term
   useEffect(() => {
     const fetchRecipes = async () => {
       if (searchTerm.trim() === "") {
-        // Fetch all recipes when searchTerm is empty
         try {
-          const response = await fetch("http://localhost:8083/api/recipes");
+          const response = await fetch("http://192.168.43.52:8083/api/recipes");
           const allRecipes = await response.json();
           setFetchedRecipes(allRecipes);
           setNoResultsMessage(null); // Clear message
@@ -89,14 +95,13 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         return;
       }
       try {
-        const response = await fetch(`http://localhost:8083/api/searchrecipes?searchTerm=${searchTerm}`);
+        const response = await fetch(`http://192.168.43.52:8083/api/searchrecipes?searchTerm=${searchTerm}`);
         const recipes = await response.json();
         setFetchedRecipes(recipes);
-        // Set the message if no recipes were found
         if (recipes.length === 0) {
           setNoResultsMessage("No recipes found for your search. Please try again.");
         } else {
-          setNoResultsMessage(null); // Clear message if recipes are found
+          setNoResultsMessage(null);
         }
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -104,13 +109,17 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     };
 
     fetchRecipes();
-  }, [searchTerm]); // Dependency on searchTerm
+  }, [searchTerm]);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (searchTerm.trim() === "") return;
     const updatedSearches = [...new Set([searchTerm, ...previousSearches])];
     setPreviousSearches(updatedSearches);
-    localStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
+    try {
+      await AsyncStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
+    } catch (error) {
+      console.error("Error saving previous searches:", error);
+    }
   };
 
   const handleRecipeSelect = (recipe: Recipe) => {
@@ -130,7 +139,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   const handleFocus = () => {
-    setShowPreviousSearches(true); // Show previous searches when input is focused
+    setShowPreviousSearches(true);
   };
 
   const handlePreviousSearchSelect = (search: string) => {
@@ -138,15 +147,19 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     handleSearch();
   };
 
-  const handleRemoveSearch = (search: string) => {
+  const handleRemoveSearch = async (search: string) => {
     const updatedSearches = previousSearches.filter((item) => item !== search);
     setPreviousSearches(updatedSearches);
-    localStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
+    try {
+      await AsyncStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
+    } catch (error) {
+      console.error("Error removing previous search:", error);
+    }
   };
 
   const handleClearSearch = () => {
     setSearchTerm("");
-    setShowPreviousSearches(true); // Show previous searches when the search term is cleared
+    setShowPreviousSearches(true);
   };
 
   return (
@@ -158,13 +171,12 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           value={searchTerm}
           onChangeText={(text) => {
             setSearchTerm(text);
-            if (text.trim() === "") handleClearSearch(); // Show previous searches if cleared
+            if (text.trim() === "") handleClearSearch();
           }}
           onSubmitEditing={handleSearch}
           onFocus={handleFocus}
         />
       </View>
-      {/* Show previous searches only if the search has been submitted or input is focused */}
       {showPreviousSearches && previousSearches.length > 0 && (
         <View style={styles.previousSearchesContainer}>
           {previousSearches.map((item) => {
@@ -192,7 +204,6 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <Text style={styles.sectionTitle}>Tags</Text>
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
       </View>
-      {/* Display fetched recipes */}
       {fetchedRecipes.length > 0 ? (
         <View style={styles.recipesContainer}>
           {fetchedRecipes.map((recipe) => (
@@ -206,16 +217,11 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           ))}
         </View>
       ) : (
-        noResultsMessage && (
-          <View style={styles.noResultsContainer}>
-            <Text style={styles.noResultsText}>{noResultsMessage}</Text>
-          </View>
-        )
+        noResultsMessage && <Text>{noResultsMessage}</Text>
       )}
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", padding: 40 },
   searchContainer: { flexDirection: "row", alignItems: "center" },
