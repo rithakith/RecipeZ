@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Tags from "../UI/tags";
 import RecipeCard from "../UI/RecipeCard";
 
@@ -37,7 +37,8 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [uniqueTags, setUniqueTags] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [previousSearches, setPreviousSearches] = useState<string[]>([]);
-  const [showPreviousSearches, setShowPreviousSearches] = useState<boolean>(false);
+  const [showPreviousSearches, setShowPreviousSearches] =
+    useState<boolean>(false);
   const [fetchedRecipes, setFetchedRecipes] = useState<Recipe[]>([]);
   const [noResultsMessage, setNoResultsMessage] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
@@ -45,7 +46,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchUniqueTags = async () => {
       try {
-        const response = await fetch("http://192.168.43.52:8083/api/uniquetags");
+        const response = await fetch(
+          "http://192.168.1.138:8083/api/uniquetags"
+        );
         const tags: string[] = await response.json();
         setUniqueTags(tags.map((tag) => tag.replace(/[^a-zA-Z0-9 ]/g, "")));
       } catch (error) {
@@ -70,7 +73,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const handleTagSelect = async (tag: string) => {
     try {
-      const response = await fetch(`http://192.168.43.52:8083/api/recipesbytag?tag=${tag}`);
+      const response = await fetch(
+        `http://192.168.1.138:8083/api/recipesbytag?tag=${tag}`
+      );
       const filteredRecipes = await response.json();
       navigation.navigate("RecipeCollection", {
         recipes: filteredRecipes,
@@ -85,7 +90,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const fetchRecipes = async () => {
       if (searchTerm.trim() === "") {
         try {
-          const response = await fetch("http://192.168.43.52:8083/api/recipes");
+          const response = await fetch("http://192.168.1.138:8083/api/recipes");
           const allRecipes = await response.json();
           setFetchedRecipes(allRecipes);
           setNoResultsMessage(null); // Clear message
@@ -95,11 +100,15 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         return;
       }
       try {
-        const response = await fetch(`http://192.168.43.52:8083/api/searchrecipes?searchTerm=${searchTerm}`);
+        const response = await fetch(
+          `http://192.168.1.138:8083/api/searchrecipes?searchTerm=${searchTerm}`
+        );
         const recipes = await response.json();
         setFetchedRecipes(recipes);
         if (recipes.length === 0) {
-          setNoResultsMessage("No recipes found for your search. Please try again.");
+          setNoResultsMessage(
+            "No recipes found for your search. Please try again."
+          );
         } else {
           setNoResultsMessage(null);
         }
@@ -116,7 +125,10 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const updatedSearches = [...new Set([searchTerm, ...previousSearches])];
     setPreviousSearches(updatedSearches);
     try {
-      await AsyncStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
+      await AsyncStorage.setItem(
+        "previousSearches",
+        JSON.stringify(updatedSearches)
+      );
     } catch (error) {
       console.error("Error saving previous searches:", error);
     }
@@ -151,7 +163,10 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const updatedSearches = previousSearches.filter((item) => item !== search);
     setPreviousSearches(updatedSearches);
     try {
-      await AsyncStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
+      await AsyncStorage.setItem(
+        "previousSearches",
+        JSON.stringify(updatedSearches)
+      );
     } catch (error) {
       console.error("Error removing previous search:", error);
     }
@@ -245,7 +260,12 @@ const styles = StyleSheet.create({
   },
   section: { marginVertical: 10, padding: 20 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  searchItem: { padding: 10, borderBottomWidth: 1, borderColor: "#ddd", flex: 1 },
+  searchItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+    flex: 1,
+  },
   closeIcon: {
     padding: 10,
     justifyContent: "center",
