@@ -27,15 +27,15 @@ const LandingScreen: React.FC<LandingScreenProps> = ({ navigation }) => {
           </Text>
           <TouchableOpacity
             style={[styles.button, styles.loginButton]}
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.navigate("DetailInquiry")}
           >
             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.signUpButton]}
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.navigate("DetailInquiry")}
           >
-            <Text style={styles.buttonText}>Sign Up</Text>
+            <Text style={styles.buttonText}>Create New Account</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     color: "white",
     marginBottom: 20,
     marginHorizontal: 5,
+    paddingHorizontal: 1,
   },
   button: {
     width: "75%",

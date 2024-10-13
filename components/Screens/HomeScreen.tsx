@@ -43,6 +43,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
+
         const response = await fetch(`${url}/api/recipes`);
         const data: Recipe[] = await response.json();
         setRecipes(data);
@@ -58,7 +59,9 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const fetchUniqueTags = async () => {
       try {
         const response = await fetch(
+
           `${url}/api/uniquetags`
+
         );
         const tags: string[] = await response.json();
         setUniqueTags(tags.map((tag) => tag.replace(/[^a-zA-Z0-9 ]/g, "")));
@@ -78,7 +81,9 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const handleTagSelect = async (tag: string) => {
     try {
       const response = await fetch(
+
         `${url}/api/recipesbytag?tag=${tag}`
+
       );
       const filteredRecipes = await response.json();
       navigation.navigate("RecipeCollection", {

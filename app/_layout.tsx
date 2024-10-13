@@ -11,14 +11,16 @@ import IngredientsScreen from "@/components/Screens/IngredientsScreen";
 import SearchScreen from "@/components/Screens/SearchScreen";
 import RecipeCollection from "@/components/Screens/RecipeCollectionScreen";
 import BottomSheet from "@/components/UI/BottomSheet";
+import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
+import QuestionScreen from "@/components/Screens/QuestionScreen";
 
 type RootStackParamList = {
   Landing: undefined;
-  Login: undefined;
-  SignUp: undefined;
   Home: undefined;
   Ingredients: { recipe: any };
-  RecipeCollection: { recipe: Recipe[], title: any };
+  RecipeCollection: { recipe: Recipe[]; title: any };
+  DetailInquiry: undefined;
+  QuestionScreen: undefined; // Add the new screen to the stack
 };
 
 type TabParamList = {
@@ -48,13 +50,26 @@ const HomeStack: React.FC = () => {
         component={RecipeCollection}
         options={{ title: "Recipe filters" }}
       />
+      <Stack.Screen
+        name="DetailInquiry"
+        component={DetailInquiryScreen}
+        options={{ title: "Detail Inquiry" }} // Add title for the screen
+      />
+      <Stack.Screen
+        name="QuestionScreen" // Add the new screen to the stack
+        component={QuestionScreen}
+        options={{ title: "Questions" }}
+      />
     </Stack.Navigator>
   );
 };
 
 // Create a new BotTab component
 const BotTab: React.FC<{ onPress: () => void }> = ({ onPress }) => (
-  <TouchableOpacity onPress={onPress} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  <TouchableOpacity
+    onPress={onPress}
+    style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  >
     <Ionicons name="robot" size={24} color="gray" />
   </TouchableOpacity>
 );
@@ -104,7 +119,9 @@ const TabNavigator: React.FC = () => {
           component={() => null} // No component, just use the BotTab for handling press
           options={{
             title: "Bot",
-            tabBarButton: (props) => <BotTab {...props} onPress={handleOpenBottomSheet} />,
+            tabBarButton: (props) => (
+              <BotTab {...props} onPress={handleOpenBottomSheet} />
+            ),
           }}
         />
       </Tab.Navigator>
@@ -129,6 +146,16 @@ const Layout: React.FC = () => (
       <Stack.Screen
         name="Home"
         component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="DetailInquiry"
+        component={DetailInquiryScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="QuestionScreen" // Add the new screen to the stack
+        component={QuestionScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
