@@ -11,14 +11,15 @@ import IngredientsScreen from "@/components/Screens/IngredientsScreen";
 import SearchScreen from "@/components/Screens/SearchScreen";
 import RecipeCollection from "@/components/Screens/RecipeCollectionScreen";
 import BottomSheet from "@/components/UI/BottomSheet";
+import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
+
 
 type RootStackParamList = {
   Landing: undefined;
-  Login: undefined;
-  SignUp: undefined;
   Home: undefined;
   Ingredients: { recipe: any };
   RecipeCollection: { recipe: Recipe[], title: any };
+  DetailInquiry: undefined;
 };
 
 type TabParamList = {
@@ -47,6 +48,11 @@ const HomeStack: React.FC = () => {
         name="RecipeCollection"
         component={RecipeCollection}
         options={{ title: "Recipe filters" }}
+        />
+      <Stack.Screen
+        name="DetailInquiry"
+        component={DetailInquiryScreen}
+        options={{ title: "Detail Inquiry" }} // Add title for the screen
       />
     </Stack.Navigator>
   );
@@ -129,6 +135,11 @@ const Layout: React.FC = () => (
       <Stack.Screen
         name="Home"
         component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="DetailInquiry"
+        component={DetailInquiryScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
