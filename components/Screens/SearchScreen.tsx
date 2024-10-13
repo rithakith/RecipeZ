@@ -13,7 +13,7 @@ import RecipeCard from "../UI/RecipeCard";
 type Recipe = {
   recipe_id: number;
   title: string;
-  images: string;
+  images: string[];
   cook_time: number;
   rating: number;
   reviews: number;
@@ -38,7 +38,8 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [previousSearches, setPreviousSearches] = useState<string[]>([]);
   const [showPreviousSearches, setShowPreviousSearches] = useState<boolean>(false);
-  const [fetchedRecipes, setFetchedRecipes] = useState<any[]>([]);
+  const [fetchedRecipes, setFetchedRecipes] = useState<Recipe[]>([]);
+  const [noResultsMessage, setNoResultsMessage] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -76,13 +77,27 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchRecipes = async () => {
       if (searchTerm.trim() === "") {
-        setFetchedRecipes([]); // Clear recipes if searchTerm is empty
+        // Fetch all recipes when searchTerm is empty
+        try {
+          const response = await fetch("http://localhost:8083/api/recipes");
+          const allRecipes = await response.json();
+          setFetchedRecipes(allRecipes);
+          setNoResultsMessage(null); // Clear message
+        } catch (error) {
+          console.error("Error fetching all recipes:", error);
+        }
         return;
       }
       try {
         const response = await fetch(`http://localhost:8083/api/searchrecipes?searchTerm=${searchTerm}`);
         const recipes = await response.json();
         setFetchedRecipes(recipes);
+        // Set the message if no recipes were found
+        if (recipes.length === 0) {
+          setNoResultsMessage("No recipes found for your search. Please try again.");
+        } else {
+          setNoResultsMessage(null); // Clear message if recipes are found
+        }
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }
@@ -96,7 +111,6 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const updatedSearches = [...new Set([searchTerm, ...previousSearches])];
     setPreviousSearches(updatedSearches);
     localStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
-    setShowPreviousSearches(true); // Show previous searches after search
   };
 
   const handleRecipeSelect = (recipe: Recipe) => {
@@ -116,7 +130,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   const handleFocus = () => {
-    setShowPreviousSearches(false); // Hide previous searches when input is focused
+    setShowPreviousSearches(true); // Show previous searches when input is focused
   };
 
   const handlePreviousSearchSelect = (search: string) => {
@@ -130,6 +144,11 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     localStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
   };
 
+  const handleClearSearch = () => {
+    setSearchTerm("");
+    setShowPreviousSearches(true); // Show previous searches when the search term is cleared
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.searchContainer}>
@@ -137,12 +156,15 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           style={styles.input}
           placeholder="Search"
           value={searchTerm}
-          onChangeText={setSearchTerm}
+          onChangeText={(text) => {
+            setSearchTerm(text);
+            if (text.trim() === "") handleClearSearch(); // Show previous searches if cleared
+          }}
           onSubmitEditing={handleSearch}
           onFocus={handleFocus}
         />
       </View>
-      {/* Show previous searches only if the search has been submitted */}
+      {/* Show previous searches only if the search has been submitted or input is focused */}
       {showPreviousSearches && previousSearches.length > 0 && (
         <View style={styles.previousSearchesContainer}>
           {previousSearches.map((item) => {
@@ -171,7 +193,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
       </View>
       {/* Display fetched recipes */}
-      {searchTerm.trim() && fetchedRecipes.length > 0 && (
+      {fetchedRecipes.length > 0 ? (
         <View style={styles.recipesContainer}>
           {fetchedRecipes.map((recipe) => (
             <RecipeCard
@@ -183,6 +205,12 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             />
           ))}
         </View>
+      ) : (
+        noResultsMessage && (
+          <View style={styles.noResultsContainer}>
+            <Text style={styles.noResultsText}>{noResultsMessage}</Text>
+          </View>
+        )
       )}
     </ScrollView>
   );
@@ -226,6 +254,16 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#fff",
     borderRadius: 10,
+  },
+  noResultsContainer: {
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noResultsText: {
+    color: "gray",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

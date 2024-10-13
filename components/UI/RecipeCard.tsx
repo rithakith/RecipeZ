@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 type Recipe = {
   title: string;
   images: string;
-  calories: number;
+
   cook_time: string;
 };
 
@@ -28,7 +28,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onFavoriteToggle, onRec
     <TouchableOpacity onPress={() => onRecipeSelect(recipe)} style={styles.card}>
       <Image source={{ uri: recipe.images[0].url }} style={styles.image} />
       <Text style={styles.title}>{recipe.title}</Text>
-      <Text style={styles.details}>Calories: {recipe.calories}</Text>
       <Text style={styles.details}>Cook Time: {recipe.cook_time}</Text>
       <TouchableOpacity onPress={toggleFavorite}>
         <Ionicons 
