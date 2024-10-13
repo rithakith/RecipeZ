@@ -60,6 +60,7 @@ const DetailInquiryScreen: React.FC<DetailInquiryScreenProps> = ({
       <FlatList
         ref={flatListRef}
         data={images}
+        style={{ width, height: 300 }}
         keyExtractor={(_, index) => index.toString()}
         horizontal
         pagingEnabled
@@ -73,9 +74,13 @@ const DetailInquiryScreen: React.FC<DetailInquiryScreenProps> = ({
           index,
         })}
       />
+      <Text style={styles.topic}>
+        Personalize Your Meal Planning Experience
+      </Text>
       <Text style={styles.descriptionText}>
-        Explore how we help you achieve your health goals with personalized
-        plans and happiness at the core.
+        Would you like to enter your dietary preferences, available ingredients,
+        and health goals to receive tailored meal suggestions? This will help us
+        provide more accurate recipes and meal plans just for you.
       </Text>
       {/* make the button stay in the same horizontal line */}
       <View style={styles.buttonSection}>
@@ -87,7 +92,7 @@ const DetailInquiryScreen: React.FC<DetailInquiryScreenProps> = ({
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.nextButton]}
-          onPress={() => navigation.navigate("Home")}
+          onPress={() => navigation.navigate("QuestionScreen")}
         >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
@@ -98,30 +103,35 @@ const DetailInquiryScreen: React.FC<DetailInquiryScreenProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    height: height,
-    display: "flex",
-    flexDirection: "column",
-    gap: 30,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: "auto",
+    paddingVertical: 60,
   },
   image: {
     width,
     height: 300,
-    borderRadius: 20,
+  },
+  topic: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "black",
+    marginVertical: 20,
   },
   descriptionText: {
     fontSize: 18,
     textAlign: "center",
     color: "black",
-    marginVertical: 20,
+    marginTop: 10,
+    marginBottom: 20,
     paddingHorizontal: 10,
   },
   buttonSection: {
     flexDirection: "row",
     gap: 25,
+    marginTop: 20,
   },
   button: {
     width: "35%",
