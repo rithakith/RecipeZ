@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 10,
   },
   subText: {
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   optionButton: {
-    borderColor: "blue",
+    borderColor: "#70B9BE",
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
@@ -114,12 +115,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   optionText: {
-    color: "blue",
+    color: "#70B9BE",
     fontSize: 16,
   },
   input: {
     height: 40,
-    borderColor: "blue",
+    borderColor: "#70B9BE",
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   submitButton: {
-    backgroundColor: "blue",
+    backgroundColor: "#042628",
     borderRadius: 10,
     padding: 10,
     width: '80%',
