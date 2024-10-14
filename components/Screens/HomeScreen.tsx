@@ -5,9 +5,11 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from "react-native";
 import RecipeCard from "../UI/RecipeCard";
 import Tags from "../UI/tags";
+import cookieimg from "../../assets/images/cookie.png";
 
 // Define a type for the recipe data
 type Recipe = {
@@ -103,13 +105,20 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hi Alena Sabyan</Text>
-        <Text style={styles.question}>What are you cooking today?</Text>
+        <Text style={styles.question}>
+          <Image source={cookieimg} style={styles.image} /> What are you cooking
+          today?
+        </Text>
       </View>
 
       {/* Featured Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Featured</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginLeft: 10 }}
+        >
           {recipes.slice(0, 5).map((recipe) => (
             <TouchableOpacity
               key={recipe.recipe_id}
@@ -167,12 +176,18 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", paddingTop: 20 },
-  header: { padding: 20 },
-  greeting: { fontSize: 24, fontWeight: "bold" },
-  question: { fontSize: 16, color: "#666" },
-  section: { marginVertical: 10, padding: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  featuredCard: { marginRight: 10, width: 300 },
+  header: { paddingHorizontal: 25, paddingVertical: 25 },
+  image: { width: 20, height: 20 },
+  greeting: { fontSize: 28, fontWeight: "bold" },
+  question: { fontSize: 16 },
+  section: { marginVertical: 10 },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginLeft: 25,
+  },
+  featuredCard: { marginRight: 10, width: 300, height: 200 },
 });
 
 export default HomeScreen;
