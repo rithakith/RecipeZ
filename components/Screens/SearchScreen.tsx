@@ -10,6 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Tags from "../UI/tags";
 import RecipeCard from "../UI/RecipeCard";
+const url = process.env.EXPO_PUBLIC_API_URL;
 
 type Recipe = {
   recipe_id: number;
@@ -46,9 +47,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchUniqueTags = async () => {
       try {
-        const response = await fetch(
-          "http://192.168.1.138:8083/api/uniquetags"
-        );
+
+        const response = await fetch(`${url}/api/uniquetags`);
+
         const tags: string[] = await response.json();
         setUniqueTags(tags.map((tag) => tag.replace(/[^a-zA-Z0-9 ]/g, "")));
       } catch (error) {
@@ -73,9 +74,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const handleTagSelect = async (tag: string) => {
     try {
-      const response = await fetch(
-        `http://192.168.1.138:8083/api/recipesbytag?tag=${tag}`
-      );
+
+      const response = await fetch(`${url}/api/recipesbytag?tag=${tag}`);
+
       const filteredRecipes = await response.json();
       navigation.navigate("RecipeCollection", {
         recipes: filteredRecipes,
@@ -90,7 +91,8 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const fetchRecipes = async () => {
       if (searchTerm.trim() === "") {
         try {
-          const response = await fetch("http://192.168.1.138:8083/api/recipes");
+
+          const response = await fetch(`${url}/api/recipes`);
           const allRecipes = await response.json();
           setFetchedRecipes(allRecipes);
           setNoResultsMessage(null); // Clear message
@@ -100,9 +102,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         return;
       }
       try {
-        const response = await fetch(
-          `http://192.168.1.138:8083/api/searchrecipes?searchTerm=${searchTerm}`
-        );
+
+        const response = await fetch(`${url}/api/searchrecipes?searchTerm=${searchTerm}`);
+
         const recipes = await response.json();
         setFetchedRecipes(recipes);
         if (recipes.length === 0) {

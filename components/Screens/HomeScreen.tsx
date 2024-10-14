@@ -37,12 +37,14 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [uniqueTags, setUniqueTags] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
-
+  const url = process.env.EXPO_PUBLIC_API_URL;
+  console.log("url",url)
   // Fetch recipes
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch("http://192.168.1.138:8083/api/recipes");
+
+        const response = await fetch(`${url}/api/recipes`);
         const data: Recipe[] = await response.json();
         setRecipes(data);
       } catch (error) {
@@ -57,7 +59,9 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const fetchUniqueTags = async () => {
       try {
         const response = await fetch(
-          "http://192.168.1.138:8083/api/uniquetags"
+
+          `${url}/api/uniquetags`
+
         );
         const tags: string[] = await response.json();
         setUniqueTags(tags.map((tag) => tag.replace(/[^a-zA-Z0-9 ]/g, "")));
@@ -77,7 +81,9 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const handleTagSelect = async (tag: string) => {
     try {
       const response = await fetch(
-        `http://192.168.1.138:8083/api/recipesbytag?tag=${tag}`
+
+        `${url}/api/recipesbytag?tag=${tag}`
+
       );
       const filteredRecipes = await response.json();
       navigation.navigate("RecipeCollection", {
