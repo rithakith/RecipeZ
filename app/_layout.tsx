@@ -1,32 +1,37 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
-
+import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import BottomSheet from "@gorhom/bottom-sheet";
 import LandingScreen from "@/components/Screens/LandingScreen";
 import HomeScreen from "@/components/Screens/HomeScreen";
 import IngredientsScreen from "@/components/Screens/IngredientsScreen";
 import SearchScreen from "@/components/Screens/SearchScreen";
 import RecipeCollection from "@/components/Screens/RecipeCollectionScreen";
-import BottomSheet from "@/components/UI/BottomSheet";
 import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
 import QuestionScreen from "@/components/Screens/QuestionScreen";
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import InteractiveBottomSheet from "@/components/UI/InteractiveBottomSheet";
 type RootStackParamList = {
   Landing: undefined;
   Home: undefined;
   Ingredients: { recipe: any };
   RecipeCollection: { recipe: Recipe[]; title: any };
   DetailInquiry: undefined;
-  QuestionScreen: undefined; // Add the new screen to the stack
+  QuestionScreen: undefined;
 };
 
 type TabParamList = {
   Home: undefined;
   Search: undefined;
-  Bot: undefined; // Add Bot type
+  Bot: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -36,7 +41,7 @@ const HomeStack: React.FC = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="HomeScreen" // Changed name to avoid conflict
+        name="HomeScreen"
         component={HomeScreen}
         options={{ headerShown: false }}
       />
@@ -53,10 +58,10 @@ const HomeStack: React.FC = () => {
       <Stack.Screen
         name="DetailInquiry"
         component={DetailInquiryScreen}
-        options={{ title: "Detail Inquiry" }} // Add title for the screen
+        options={{ title: "Detail Inquiry" }}
       />
       <Stack.Screen
-        name="QuestionScreen" // Add the new screen to the stack
+        name="QuestionScreen"
         component={QuestionScreen}
         options={{ title: "Questions" }}
       />
@@ -64,29 +69,22 @@ const HomeStack: React.FC = () => {
   );
 };
 
-// Create a new BotTab component
-const BotTab: React.FC<{ onPress: () => void }> = ({ onPress }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-  >
-    <Ionicons name="robot" size={24} color="gray" />
-  </TouchableOpacity>
-);
-
 const TabNavigator: React.FC = () => {
-  const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const handleOpenBottomSheet = () => {
-    setBottomSheetVisible(true);
-  };
+  const snapPoints = useMemo(() => ["25%", "50%"], []);
 
-  const handleCloseBottomSheet = () => {
-    setBottomSheetVisible(false);
-  };
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+    <BottomSheetModalProvider>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -96,7 +94,7 @@ const TabNavigator: React.FC = () => {
             } else if (route.name === "Search") {
               iconName = "search";
             } else {
-              iconName = "home";
+              iconName = "robot";
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -104,34 +102,28 @@ const TabNavigator: React.FC = () => {
           tabBarInactiveTintColor: "gray",
         })}
       >
+        <Tab.Screen name="Home" component={HomeStack} options={{ title: "Home" }} />
+        <Tab.Screen name="Search" component={SearchScreen} options={{ title: "Search Recipes" }} />
         <Tab.Screen
-          name="Home"
-          component={HomeStack}
-          options={{ title: "Home" }}
-        />
-        <Tab.Screen
-          name="Search"
-          component={SearchScreen}
-          options={{ title: "Search Recipes" }}
-        />
-        <Tab.Screen
-          name="Bot" // New Bot tab
-          component={() => null} // No component, just use the BotTab for handling press
+          name="Bot"
+          component={() => null}
           options={{
             title: "Bot",
             tabBarButton: (props) => (
-              <BotTab {...props} onPress={handleOpenBottomSheet} />
+              <TouchableOpacity {...props} onPress={handlePresentModalPress} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Ionicons name="robot" size={24} color="gray" />
+              </TouchableOpacity>
             ),
           }}
         />
       </Tab.Navigator>
 
-      {/* Include the BottomSheet here */}
-      <BottomSheet
-        isVisible={isBottomSheetVisible}
-        onDismiss={handleCloseBottomSheet}
-      />
-    </>
+      <BottomSheetModal ref={bottomSheetModalRef} index={0} snapPoints={snapPoints}    onChange={handleSheetChanges}>
+       
+      <InteractiveBottomSheet/>
+      </BottomSheetModal>
+    </BottomSheetModalProvider>
+  </GestureHandlerRootView>
   );
 };
 
@@ -154,12 +146,20 @@ const Layout: React.FC = () => (
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="QuestionScreen" // Add the new screen to the stack
+        name="QuestionScreen"
         component={QuestionScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
   </NavigationContainer>
 );
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export default Layout;
