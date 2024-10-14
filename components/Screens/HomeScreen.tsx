@@ -38,12 +38,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [uniqueTags, setUniqueTags] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const url = process.env.EXPO_PUBLIC_API_URL;
-  console.log("url",url)
+  console.log("url", url);
   // Fetch recipes
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-
         const response = await fetch(`${url}/api/recipes`);
         const data: Recipe[] = await response.json();
         setRecipes(data);
@@ -58,11 +57,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchUniqueTags = async () => {
       try {
-        const response = await fetch(
-
-          `${url}/api/uniquetags`
-
-        );
+        const response = await fetch(`${url}/api/uniquetags`);
         const tags: string[] = await response.json();
         setUniqueTags(tags.map((tag) => tag.replace(/[^a-zA-Z0-9 ]/g, "")));
       } catch (error) {
@@ -80,11 +75,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   // Handle tag selection and fetch recipes
   const handleTagSelect = async (tag: string) => {
     try {
-      const response = await fetch(
-
-        `${url}/api/recipesbytag?tag=${tag}`
-
-      );
+      const response = await fetch(`${url}/api/recipesbytag?tag=${tag}`);
       const filteredRecipes = await response.json();
       navigation.navigate("RecipeCollection", {
         recipes: filteredRecipes,
@@ -175,7 +166,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: "#fff", paddingTop: 20 },
   header: { padding: 20 },
   greeting: { fontSize: 24, fontWeight: "bold" },
   question: { fontSize: 16, color: "#666" },
