@@ -105,7 +105,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
               placeholder="Type an ingredient"
             />
             <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
-              <Text style={styles.addButtonText}>+</Text>
+              <Text style={styles.addButtonText}>▶</Text>
             </TouchableOpacity>
           </View>
 
@@ -115,10 +115,11 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
             renderItem={renderIngredient}
             keyExtractor={(item, index) => index.toString()}
             style={styles.ingredientList}
+            contentContainerStyle={styles.ingredientContainer}
           />
         </View>
       ) : (
-        <View>
+        <View style={styles.answerSection}>
           {currentQuestion?.answers.map((answer, index) => (
             <TouchableOpacity key={index} style={styles.answerButton}>
               <Text style={styles.answerText}>{answer}</Text>
@@ -131,14 +132,14 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
       <View style={styles.buttonSection}>
         {step === 1 ? (
           <TouchableOpacity
-            style={[styles.button, styles.previousButton]}
+            style={[styles.button, styles.previousButton, styles.shadow]}
             onPress={() => navigation.navigate("DetailInquiry")}
           >
             <Text style={styles.buttonText}>Back</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            style={[styles.button, styles.previousButton]}
+            style={[styles.button, styles.previousButton, styles.shadow]}
             onPress={handlePrevious}
           >
             <Text style={styles.buttonText}>Previous</Text>
@@ -148,6 +149,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
           style={[
             styles.button,
             step === 4 ? styles.doneButton : styles.nextButton,
+            styles.shadow,
           ]}
           onPress={handleNext}
         >
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
     paddingHorizontal: 20,
-    paddingTop: 100,
+    paddingTop: 150,
   },
   stepper: {
     position: "absolute",
@@ -173,7 +175,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
   },
   step: {
     width: 30,
@@ -181,11 +182,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
-    borderWidth: 1,
+    borderWidth: 3,
   },
   activeStep: {
     backgroundColor: "#042628",
-    borderColor: "#042628",
+    borderColor: "#70B9BE",
   },
   inactiveStep: {
     backgroundColor: "#70B9BE",
@@ -202,18 +203,27 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 24,
     textAlign: "center",
-    marginBottom: 20,
     fontWeight: "bold",
   },
+  answerSection: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   answerButton: {
-    backgroundColor: "#",
-    padding: 15,
+    backgroundColor: "#042628",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     marginVertical: 10,
-    borderRadius: 8,
+    borderRadius: 15,
   },
   answerText: {
     textAlign: "center",
     fontSize: 16,
+    color: "white",
   },
   buttonSection: {
     flexDirection: "row",
@@ -227,7 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   previousButton: {
-    backgroundColor: "#d3d3d3",
+    backgroundColor: "#70B9BE",
   },
   nextButton: {
     backgroundColor: "#70B9BE",
@@ -240,23 +250,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5, // For Android shadow
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
   },
   input: {
-    flex: 1,
+    width: "85%",
     borderWidth: 1,
     borderColor: "#d3d3d3",
     padding: 10,
-    borderRadius: 8,
+    borderTopLeftRadius: 15,
+    borderBottomLeftRadius: 15,
   },
   addButton: {
-    marginLeft: 10,
+    width: "15%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#70B9BE",
+    borderWidth: 1,
+    borderColor: "#70B9BE",
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
     padding: 10,
-    borderRadius: 8,
   },
   addButtonText: {
     color: "white",
@@ -266,11 +290,19 @@ const styles = StyleSheet.create({
   ingredientList: {
     marginTop: 10,
   },
+  ingredientContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
   ingredientItem: {
-    padding: 10,
-    backgroundColor: "#f0f0f0",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#042628",
+    color: "white",
     marginVertical: 5,
-    borderRadius: 8,
+    marginRight: 10,
+    borderRadius: 15,
   },
 });
 
