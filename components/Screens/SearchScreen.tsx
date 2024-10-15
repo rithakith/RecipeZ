@@ -180,7 +180,10 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ justifyContent: "center" }}
+    >
       <View style={styles.searchContainer}>
         <Image source={backArrow} style={styles.image} />
         <TextInput
@@ -248,7 +251,6 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: "#fff",
     paddingTop: 40,
   },
@@ -259,7 +261,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 15,
   },
@@ -298,12 +299,10 @@ const styles = StyleSheet.create({
   section: { marginVertical: 10, padding: 20 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   searchItem: {
-    // paddingHorizontal: 10,
     borderColor: "#ddd",
     flex: 1,
   },
   closeIcon: {
-    // paddingHorizontal: 10,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -313,6 +312,7 @@ const styles = StyleSheet.create({
   },
   recipesContainer: {
     marginVertical: 10,
+    marginLeft: 20,
     padding: 10,
     backgroundColor: "#fff",
     borderRadius: 10,
