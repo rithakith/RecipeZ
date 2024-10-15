@@ -19,6 +19,7 @@ import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
 import QuestionScreen from "@/components/Screens/QuestionScreen";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import InteractiveBottomSheet from "@/components/UI/InteractiveBottomSheet";
+import AuthScreen from "@/components/Screens/AuthScreen";
 type RootStackParamList = {
   Landing: undefined;
   Home: undefined;
@@ -127,9 +128,27 @@ const TabNavigator: React.FC = () => {
   );
 };
 
+const linking = {
+  prefixes: ["myapp://", "http://localhost:8081"],
+  config: {
+    screens: {
+
+      Landing: "landing",
+      Home: "home",
+      DetailInquiry: "detail-inquiry",
+      QuestionScreen: "questions",
+    },
+  },
+};
+
 const Layout: React.FC = () => (
-  <NavigationContainer independent={true}>
-    <Stack.Navigator initialRouteName="Landing">
+  <NavigationContainer independent={true} >
+    <Stack.Navigator initialRouteName="Auth">
+    <Stack.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="Landing"
         component={LandingScreen}

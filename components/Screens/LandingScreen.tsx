@@ -27,7 +27,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({ navigation }) => {
           </Text>
           <TouchableOpacity
             style={[styles.button, styles.loginButton]}
-            onPress={() => navigation.navigate("DetailInquiry")}
+            onPress={() => promptAsync()} disabled={!request}
           >
             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
