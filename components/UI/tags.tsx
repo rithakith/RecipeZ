@@ -21,7 +21,7 @@ const Tags: React.FC<TagsProps> = ({ tags, onSelectTag }) => {
   };
 
   return (
-    <View>
+    <View style={{ position: "relative" }}>
       {/* If showAll is false, allow horizontal scrolling */}
       {!showAll ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "nowrap",
+    marginLeft: 10,
   },
   wrapContainer: {
     flexWrap: "wrap",
@@ -82,12 +83,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   seeMoreButton: {
-    alignSelf: "center",
-    marginTop: 10,
+    position: "absolute",
+    top: -35,
+    right: 25,
   },
   seeMoreText: {
     color: "#70B9BE",
     fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

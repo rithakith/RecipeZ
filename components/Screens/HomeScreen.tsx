@@ -136,7 +136,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       </View>
 
       {/* Tags Section */}
-      <View style={(styles.section, styles.tagSection)}>
+      <View style={styles.section}>
         <Text style={styles.sectionTitle}>Category</Text>
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
       </View>
@@ -144,7 +144,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       {/* Popular Recipes Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Popular Recipes</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginLeft: 10 }}
+        >
           {recipes.slice(5, 10).map((recipe) => (
             <RecipeCard
               key={recipe.recipe_id}
@@ -159,7 +163,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       {/* Recommended Recipes Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recommended Just for You</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginLeft: 10 }}
+        >
           {recipes.slice(10, 15).map((recipe) => (
             <RecipeCard
               key={recipe.recipe_id}
@@ -190,9 +198,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 10,
     marginLeft: 25,
-  },
-  tagSection: {
-    marginLeft: 10,
   },
 });
 

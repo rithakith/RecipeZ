@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Tags from "../UI/tags";
 import RecipeCard from "../UI/RecipeCard";
+import backArrow from "../../assets/images/arrow_back.png";
 const url = process.env.EXPO_PUBLIC_API_URL;
 
 type Recipe = {
@@ -47,7 +49,6 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchUniqueTags = async () => {
       try {
-
         const response = await fetch(`${url}/api/uniquetags`);
 
         const tags: string[] = await response.json();
@@ -74,7 +75,6 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const handleTagSelect = async (tag: string) => {
     try {
-
       const response = await fetch(`${url}/api/recipesbytag?tag=${tag}`);
 
       const filteredRecipes = await response.json();
@@ -91,7 +91,6 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const fetchRecipes = async () => {
       if (searchTerm.trim() === "") {
         try {
-
           const response = await fetch(`${url}/api/recipes`);
           const allRecipes = await response.json();
           setFetchedRecipes(allRecipes);
@@ -102,8 +101,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         return;
       }
       try {
-
-        const response = await fetch(`${url}/api/searchrecipes?searchTerm=${searchTerm}`);
+        const response = await fetch(
+          `${url}/api/searchrecipes?searchTerm=${searchTerm}`
+        );
 
         const recipes = await response.json();
         setFetchedRecipes(recipes);
@@ -182,6 +182,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.searchContainer}>
+        <Image source={backArrow} style={styles.image} />
         <TextInput
           style={styles.input}
           placeholder="Search"
@@ -196,31 +197,36 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       </View>
       {showPreviousSearches && previousSearches.length > 0 && (
         <View style={styles.previousSearchesContainer}>
-          {previousSearches.map((item) => {
-            if (!item) return null;
-            return (
-              <View key={item} style={styles.searchItemContainer}>
-                <TouchableOpacity
-                  style={styles.searchItem}
-                  onPress={() => handlePreviousSearchSelect(item)}
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleRemoveSearch(item)}
-                  style={styles.closeIcon}
-                >
-                  <Text style={styles.closeText}>×</Text>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
+          <Text style={styles.recentText}>Recent</Text>
+
+          <View style={styles.recentSection}>
+            {previousSearches.map((item) => {
+              if (!item) return null;
+              return (
+                <View key={item} style={styles.searchItemContainer}>
+                  <TouchableOpacity
+                    style={styles.searchItem}
+                    onPress={() => handlePreviousSearchSelect(item)}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveSearch(item)}
+                    style={styles.closeIcon}
+                  >
+                    <Text style={styles.closeText}>×</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
+          </View>
         </View>
       )}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Tags</Text>
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
       </View>
+
       {fetchedRecipes.length > 0 ? (
         <View style={styles.recipesContainer}>
           {fetchedRecipes.map((recipe) => (
@@ -240,36 +246,64 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   );
 };
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 40 },
-  searchContainer: { flexDirection: "row", alignItems: "center" },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingTop: 40,
+  },
+  image: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 15,
+  },
   input: {
     flex: 1,
     padding: 10,
     borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 10,
+    borderWidth: 2,
+    borderRadius: 15,
   },
   previousSearchesContainer: {
-    backgroundColor: "#f9f9f9",
-    borderRadius: 10,
-    padding: 10,
+    paddingHorizontal: 20,
     marginVertical: 10,
+  },
+  recentText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#70b9be",
+    marginBottom: 5,
+  },
+  recentSection: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
   },
   searchItemContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
+    width: 100,
+    backgroundColor: "#f1f5f5",
+    borderRadius: 15,
+    padding: 10,
   },
   section: { marginVertical: 10, padding: 20 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   searchItem: {
-    padding: 10,
-    borderBottomWidth: 1,
+    // paddingHorizontal: 10,
     borderColor: "#ddd",
     flex: 1,
   },
   closeIcon: {
-    padding: 10,
+    // paddingHorizontal: 10,
     justifyContent: "center",
     alignItems: "center",
   },
