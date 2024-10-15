@@ -105,7 +105,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
               placeholder="Type an ingredient"
             />
             <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
-              <Text style={styles.addButtonText}>▶</Text>
+              <Text style={styles.addButtonText}>+</Text>
             </TouchableOpacity>
           </View>
 

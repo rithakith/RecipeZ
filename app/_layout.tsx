@@ -6,10 +6,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import {
   BottomSheetModal,
-  BottomSheetView,
+  // BottomSheetView,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import BottomSheet from "@gorhom/bottom-sheet";
+// import BottomSheet from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import LandingScreen from "@/components/Screens/LandingScreen";
 import HomeScreen from "@/components/Screens/HomeScreen";
 import IngredientsScreen from "@/components/Screens/IngredientsScreen";
@@ -17,9 +19,10 @@ import SearchScreen from "@/components/Screens/SearchScreen";
 import RecipeCollection from "@/components/Screens/RecipeCollectionScreen";
 import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
 import QuestionScreen from "@/components/Screens/QuestionScreen";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import InteractiveBottomSheet from "@/components/UI/InteractiveBottomSheet";
+
 import AuthScreen from "@/components/Screens/AuthScreen";
+
 type RootStackParamList = {
   Landing: undefined;
   Home: undefined;
@@ -85,46 +88,66 @@ const TabNavigator: React.FC = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-    <BottomSheetModalProvider>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            let iconName: keyof typeof Ionicons.glyphMap;
-            if (route.name === "Home") {
-              iconName = "home";
-            } else if (route.name === "Search") {
-              iconName = "search";
-            } else {
-              iconName = "robot";
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: "tomato",
-          tabBarInactiveTintColor: "gray",
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeStack} options={{ title: "Home" }} />
-        <Tab.Screen name="Search" component={SearchScreen} options={{ title: "Search Recipes" }} />
-        <Tab.Screen
-          name="Bot"
-          component={() => null}
-          options={{
-            title: "Bot",
-            tabBarButton: (props) => (
-              <TouchableOpacity {...props} onPress={handlePresentModalPress} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <Ionicons name="robot" size={24} color="gray" />
-              </TouchableOpacity>
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      <BottomSheetModalProvider>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, size }) => {
+              let iconName: keyof typeof Ionicons.glyphMap = "home";
+              if (route.name === "Home") {
+                iconName = "home";
+              } else if (route.name === "Search") {
+                iconName = "search";
+              } else {
+                iconName = "restaurant";
+              }
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: "tomato",
+            tabBarInactiveTintColor: "gray",
+          })}
+        >
+          <Tab.Screen
+            name="Home"
+            component={HomeStack}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen
+            name="Search"
+            component={SearchScreen}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen
+            name="Bot"
+            component={() => null}
+            options={{
+              title: "Bot",
+              tabBarButton: (props) => (
+                <TouchableOpacity
+                  {...props}
+                  onPress={handlePresentModalPress}
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Ionicons name="restaurant" size={24} color="gray" />
+                </TouchableOpacity>
+              ),
+            }}
+          />
+        </Tab.Navigator>
 
-      <BottomSheetModal ref={bottomSheetModalRef} index={0} snapPoints={snapPoints}    onChange={handleSheetChanges}>
-       
-      <InteractiveBottomSheet/>
-      </BottomSheetModal>
-    </BottomSheetModalProvider>
-  </GestureHandlerRootView>
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={0}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+        >
+          <InteractiveBottomSheet />
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 };
 

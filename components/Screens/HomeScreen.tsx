@@ -5,9 +5,11 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from "react-native";
 import RecipeCard from "../UI/RecipeCard";
 import Tags from "../UI/tags";
+import cookieimg from "../../assets/images/cookie.png";
 
 // Define a type for the recipe data
 type Recipe = {
@@ -38,12 +40,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [uniqueTags, setUniqueTags] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const url = process.env.EXPO_PUBLIC_API_URL;
-  console.log("url",url)
+  console.log("url", url);
   // Fetch recipes
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-
         const response = await fetch(`${url}/api/recipes`);
         const data: Recipe[] = await response.json();
         setRecipes(data);
@@ -58,11 +59,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const fetchUniqueTags = async () => {
       try {
-        const response = await fetch(
-
-          `${url}/api/uniquetags`
-
-        );
+        const response = await fetch(`${url}/api/uniquetags`);
         const tags: string[] = await response.json();
         setUniqueTags(tags.map((tag) => tag.replace(/[^a-zA-Z0-9 ]/g, "")));
       } catch (error) {
@@ -80,11 +77,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   // Handle tag selection and fetch recipes
   const handleTagSelect = async (tag: string) => {
     try {
-      const response = await fetch(
-
-        `${url}/api/recipesbytag?tag=${tag}`
-
-      );
+      const response = await fetch(`${url}/api/recipesbytag?tag=${tag}`);
       const filteredRecipes = await response.json();
       navigation.navigate("RecipeCollection", {
         recipes: filteredRecipes,
@@ -112,13 +105,20 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hi Alena Sabyan</Text>
-        <Text style={styles.question}>What are you cooking today?</Text>
+        <Text style={styles.question}>
+          <Image source={cookieimg} style={styles.image} /> What are you cooking
+          today?
+        </Text>
       </View>
 
       {/* Featured Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Featured</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginLeft: 10 }}
+        >
           {recipes.slice(0, 5).map((recipe) => (
             <TouchableOpacity
               key={recipe.recipe_id}
@@ -137,14 +137,18 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
       {/* Tags Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Tags</Text>
+        <Text style={styles.sectionTitle}>Category</Text>
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
       </View>
 
       {/* Popular Recipes Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Popular Recipes</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginLeft: 10 }}
+        >
           {recipes.slice(5, 10).map((recipe) => (
             <RecipeCard
               key={recipe.recipe_id}
@@ -159,7 +163,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       {/* Recommended Recipes Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recommended Just for You</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginLeft: 10 }}
+        >
           {recipes.slice(10, 15).map((recipe) => (
             <RecipeCard
               key={recipe.recipe_id}
@@ -175,13 +183,22 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  header: { padding: 20 },
-  greeting: { fontSize: 24, fontWeight: "bold" },
-  question: { fontSize: 16, color: "#666" },
-  section: { marginVertical: 10, padding: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  featuredCard: { marginRight: 10, width: 300 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: 20,
+  },
+  header: { paddingHorizontal: 25, paddingVertical: 25 },
+  image: { width: 20, height: 20 },
+  greeting: { fontSize: 28, fontWeight: "bold" },
+  question: { fontSize: 16 },
+  section: { marginVertical: 10 },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginVertical: 10,
+    marginLeft: 25,
+  },
 });
 
 export default HomeScreen;
