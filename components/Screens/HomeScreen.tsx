@@ -136,8 +136,8 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       </View>
 
       {/* Tags Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Tags</Text>
+      <View style={(styles.section, styles.tagSection)}>
+        <Text style={styles.sectionTitle}>Category</Text>
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
       </View>
 
@@ -175,7 +175,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingTop: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: 20,
+  },
   header: { paddingHorizontal: 25, paddingVertical: 25 },
   image: { width: 20, height: 20 },
   greeting: { fontSize: 28, fontWeight: "bold" },
@@ -184,10 +188,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginVertical: 10,
     marginLeft: 25,
   },
-  featuredCard: { marginRight: 10, width: 300, height: 200 },
+  tagSection: {
+    marginLeft: 10,
+  },
 });
 
 export default HomeScreen;
