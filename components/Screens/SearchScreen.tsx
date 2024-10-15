@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Tags from "../UI/tags";
-import RecipeCard from "../UI/RecipeCard";
+import RecipeCardSearch from "../UI/RecipeCardSearch";
 import backArrow from "../../assets/images/arrow_back.png";
 const url = process.env.EXPO_PUBLIC_API_URL;
 
@@ -225,6 +225,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
         </View>
       )}
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Tags</Text>
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
@@ -233,7 +234,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       {fetchedRecipes.length > 0 ? (
         <View style={styles.recipesContainer}>
           {fetchedRecipes.map((recipe) => (
-            <RecipeCard
+            <RecipeCardSearch
               key={recipe.recipe_id}
               recipe={recipe}
               onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_id)}
@@ -243,7 +244,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           ))}
         </View>
       ) : (
-        noResultsMessage && <Text>{noResultsMessage}</Text>
+        noResultsMessage && (
+          <Text style={styles.noResultsText}>{noResultsMessage}</Text>
+        )
       )}
     </ScrollView>
   );
@@ -262,6 +265,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 15,
   },
   input: {
@@ -296,7 +300,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
   },
-  section: { marginVertical: 10, padding: 20 },
+  section: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
   sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   searchItem: {
     borderColor: "#ddd",
@@ -311,9 +320,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   recipesContainer: {
-    marginVertical: 10,
-    marginLeft: 20,
-    padding: 10,
+    marginBottom: 50,
+    paddingHorizontal: 15,
     backgroundColor: "#fff",
     borderRadius: 10,
   },
