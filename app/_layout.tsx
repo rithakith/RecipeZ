@@ -3,7 +3,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+} from "react-native";
 import {
   BottomSheetModal,
   // BottomSheetView,
@@ -38,6 +44,7 @@ type TabParamList = {
   Home: undefined;
   Search: undefined;
   Bot: undefined;
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -82,13 +89,10 @@ const HomeStack: React.FC = () => {
 
 const TabNavigator: React.FC = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
   const snapPoints = useMemo(() => ["25%", "50%"], []);
-
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
-
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
   }, []);
@@ -98,21 +102,53 @@ const TabNavigator: React.FC = () => {
       <BottomSheetModalProvider>
         <Tab.Navigator
           screenOptions={({ route }) => ({
-            tabBarIcon: ({ color, size }) => {
+            tabBarIcon: ({ focused, color, size }) => {
               let iconName: keyof typeof Ionicons.glyphMap = "home";
+              let iconScale = focused ? 1.2 : 1; // Scale icon when focused
+
               if (route.name === "Home") {
                 iconName = "home";
               } else if (route.name === "Search") {
                 iconName = "search";
-              } else if (route.name === "Profile") {
-                iconName = "person"; // Choose an icon for Profile
-              } else {
+              } else if (route.name === "Bot") {
                 iconName = "restaurant";
+              } else if (route.name === "Profile") {
+                iconName = "person";
               }
-              return <Ionicons name={iconName} size={size} color={color} />;
+
+              return (
+                <Animated.View style={{ transform: [{ scale: iconScale }] }}>
+                  <Ionicons name={iconName} size={size} color={color} />
+                </Animated.View>
+              );
             },
-            tabBarActiveTintColor: "tomato",
-            tabBarInactiveTintColor: "gray",
+            tabBarLabel: ({ focused, color }) => {
+              let labelScale = focused ? 1.2 : 1; // Scale text when focused
+              return (
+                <Animated.Text
+                  style={{
+                    fontSize: focused ? 14 : 12, // Larger font when focused
+                    fontWeight: focused ? "bold" : "normal", // Bold text when focused
+                    color: color,
+                    transform: [{ scale: labelScale }],
+                  }}
+                >
+                  {route.name}
+                </Animated.Text>
+              );
+            },
+            tabBarStyle: {
+              backgroundColor: "#F1F5F5", // Customize tab bar background color
+              borderTopWidth: 1,
+              borderColor: "#70b9be",
+              height: 70, // Increase height for more space
+              paddingBottom: 10,
+            },
+            tabBarIconStyle: {
+              marginTop: 5, // Adjust icon positioning
+            },
+            tabBarActiveTintColor: "#042628", // Active tab color
+            tabBarInactiveTintColor: "#70b9be", // Inactive tab color
           })}
         >
           <Tab.Screen
@@ -131,16 +167,8 @@ const TabNavigator: React.FC = () => {
             options={{
               title: "Bot",
               tabBarButton: (props) => (
-                <TouchableOpacity
-                  {...props}
-                  onPress={handlePresentModalPress}
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons name="restaurant" size={24} color="gray" />
+                <TouchableOpacity {...props} onPress={handlePresentModalPress}>
+                  {/* <Ionicons name="restaurant" size={24} color="gray" /> */}
                 </TouchableOpacity>
               ),
             }}
@@ -170,7 +198,6 @@ const linking = {
   prefixes: ["myapp://", "http://localhost:8081"],
   config: {
     screens: {
-
       Landing: "landing",
       Home: "home",
       DetailInquiry: "detail-inquiry",
