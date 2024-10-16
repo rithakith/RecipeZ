@@ -20,6 +20,7 @@ import RecipeCollection from "@/components/Screens/RecipeCollectionScreen";
 import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
 import QuestionScreen from "@/components/Screens/QuestionScreen";
 import InteractiveBottomSheet from "@/components/UI/InteractiveBottomSheet";
+import ProfileScreen from "@/components/Screens/ProfileScreen";
 
 import AuthScreen from "@/components/Screens/AuthScreen";
 
@@ -36,6 +37,7 @@ type TabParamList = {
   Home: undefined;
   Search: undefined;
   Bot: undefined;
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -97,13 +99,15 @@ const TabNavigator: React.FC = () => {
                 iconName = "home";
               } else if (route.name === "Search") {
                 iconName = "search";
-              } else {
+              } else if (route.name === "Bot") {
                 iconName = "restaurant";
+              } else if (route.name === "Profile") {
+                iconName = "person";
               }
               return <Ionicons name={iconName} size={size} color={color} />;
             },
-            tabBarActiveTintColor: "tomato",
-            tabBarInactiveTintColor: "gray",
+            tabBarActiveTintColor: "#042628",
+            tabBarInactiveTintColor: "#70b9be",
           })}
         >
           <Tab.Screen
@@ -125,16 +129,14 @@ const TabNavigator: React.FC = () => {
                 <TouchableOpacity
                   {...props}
                   onPress={handlePresentModalPress}
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons name="restaurant" size={24} color="gray" />
-                </TouchableOpacity>
+                ></TouchableOpacity>
               ),
             }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{ headerShown: false }}
           />
         </Tab.Navigator>
 
@@ -155,7 +157,6 @@ const linking = {
   prefixes: ["myapp://", "http://localhost:8081"],
   config: {
     screens: {
-
       Landing: "landing",
       Home: "home",
       DetailInquiry: "detail-inquiry",
@@ -165,9 +166,9 @@ const linking = {
 };
 
 const Layout: React.FC = () => (
-  <NavigationContainer independent={true} >
+  <NavigationContainer independent={true}>
     <Stack.Navigator initialRouteName="Auth">
-    <Stack.Screen
+      <Stack.Screen
         name="Auth"
         component={AuthScreen}
         options={{ headerShown: false }}
