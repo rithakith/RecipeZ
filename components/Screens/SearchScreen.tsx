@@ -11,7 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Tags from "../UI/tags";
 import RecipeCardSearch from "../UI/RecipeCardSearch";
-import backArrow from "../../assets/images/arrow_back.png";
+import { Ionicons } from "@expo/vector-icons";
 const url = process.env.EXPO_PUBLIC_API_URL;
 
 type Recipe = {
@@ -185,7 +185,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       contentContainerStyle={{ justifyContent: "center" }}
     >
       <View style={styles.searchContainer}>
-        <Image source={backArrow} style={styles.image} />
+        <Ionicons name="search-outline" size={30} color={"#70b9be"} />
         <TextInput
           style={styles.input}
           placeholder="Search"
@@ -266,6 +266,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    gap: 10,
     marginHorizontal: 15,
   },
   input: {
@@ -303,10 +304,14 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 10,
     marginBottom: 10,
-    paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
   searchItem: {
     borderColor: "#ddd",
     flex: 1,
