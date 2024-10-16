@@ -1,16 +1,19 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, Alert, ImageBackground, TouchableOpacity } from "react-native";
+import { useState, useEffect,useContext } from "react";
+import { StyleSheet, Text, View, Alert, ImageBackground, TouchableOpacity } from "react-native";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import { AuthContext } from "../navigation/AuthContext";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const redirectUri = AuthSession.makeRedirectUri();
-
 const CLIENT_ID = "SgfaNj1qXJGFCaIOkmdhj020Zmsa";
-
+const url = process.env.EXPO_PUBLIC_API_URL;
 export default function Auth({ navigation }) {
+  const { saveToken ,saveUserData} = useContext(AuthContext); // Get saveToken from AuthContext
+
   const discovery = AuthSession.useAutoDiscovery("https://api.asgardeo.io/t/org606kb/oauth2/token");
   const [tokenResponse, setTokenResponse] = useState({});
   const [decodedIdToken, setDecodedIdToken] = useState({});
@@ -24,8 +27,64 @@ export default function Auth({ navigation }) {
     },
     discovery
   );
+  const checkUserExists = async (sub) => {
+    try {
+      const response = await fetch(`${url}/api/${sub}`, {
+        method: 'GET',
+      });
+  
+      if (response.ok) {
+        // User exists
+        return true;
+      } else if (response.status === 404) {
+        // User does not exist
+        return false;
+      } else {
+        throw new Error('Error checking user existence');
+      }
+    } catch (err) {
+      console.error('Error checking user existence:', err);
+      return false; // Consider user does not exist in case of error
+    }
+  };
 
-  const getAccessToken = () => {
+  const sendUserData = async (userData) => {
+    const userExists = await checkUserExists(userData.sub);
+  
+    if (!userExists) {
+      try {
+        const response = await fetch(`${url}/api/users`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sub: userData.sub,
+            user_name: userData.preferred_username,
+            email: userData.email,
+            user_allergies: {}, // Default values
+            dietary_preferences: {},
+            health_goals: {},
+            current_ingredients: {},
+            favorited_recipes: {},
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to send user data');
+        }
+  
+        console.log('User data sent successfully');
+      } catch (err) {
+        console.error('Error sending user data:', err);
+      }
+    } else {
+      console.log('User already exists. No action taken.');
+    }
+  };
+  
+
+  const getAccessToken = async () => {
     if (result?.params?.code) {
       fetch("https://api.asgardeo.io/t/org606kb/oauth2/token", {
         method: "POST",
@@ -35,12 +94,15 @@ export default function Auth({ navigation }) {
         body: `grant_type=authorization_code&code=${result?.params?.code}&redirect_uri=${redirectUri}&client_id=${CLIENT_ID}&code_verifier=${request?.codeVerifier}`,
       })
         .then((response) => response.json())
-        .then((data) => {
+        .then(async (data) => {
           setTokenResponse(data);
-          setDecodedIdToken(jwtDecode(data.id_token));
-          console.log("Token response", data);
-          
-          // Navigate to DetailInquiry page upon successful login
+          const decoded = jwtDecode(data.id_token);
+          setDecodedIdToken(decoded);
+
+          // Use saveToken from context to save the token
+          saveToken(data.id_token);
+          saveUserData(decoded);
+          await sendUserData(decoded); 
           navigation.navigate("DetailInquiry");
         })
         .catch((err) => {
@@ -49,10 +111,23 @@ export default function Auth({ navigation }) {
     }
   };
 
-  const handleLogout = () => {
-    const idTokenHint = tokenResponse.id_token; // Use the ID token returned during login
-    const state = "some_state_value"; // Optional: Use any state you want to maintain, e.g., a UUID or session identifier
-  
+  const checkForToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      if (token) {
+        setDecodedIdToken(jwtDecode(token));
+        console.log("token",decodedIdToken);
+        navigation.navigate("DetailInquiry"); // Skip login if token exists
+      }
+    } catch (err) {
+      console.log("Error checking for token:", err);
+    }
+  };
+
+  const handleLogout = async () => {
+    const idTokenHint = tokenResponse.id_token;
+    const state = "some_state_value";
+
     fetch("https://api.asgardeo.io/t/org606kb/oidc/logout", {
       method: "POST",
       headers: {
@@ -60,11 +135,11 @@ export default function Auth({ navigation }) {
       },
       body: `client_id=${CLIENT_ID}&id_token_hint=${idTokenHint}&post_logout_redirect_uri=${redirectUri}&state=${state}`,
     })
-      .then((response) => {
+      .then(async (response) => {
         if (!response.ok) {
           throw new Error("Logout failed");
         }
-        // Clear the state on successful logout
+        await AsyncStorage.removeItem("authToken"); // Clear the token
         setTokenResponse({});
         setDecodedIdToken({});
         Alert.alert("Logout successful!");
@@ -76,19 +151,21 @@ export default function Auth({ navigation }) {
   };
 
   useEffect(() => {
-    (async function setResult() {
-      if (result) {
-        if (result.error) {
-          Alert.alert("Authentication error", result.params.error_description || "something went wrong");
-          return;
-        }
-        if (result.type === "success") {
-          getAccessToken();
-          console.log(decodedIdToken);
-        }
+    checkForToken(); // Check for token on component mount
+  }, []);
+
+  useEffect(() => {
+    if (result) {
+      if (result.error) {
+        Alert.alert("Authentication error", result.params.error_description || "something went wrong");
+        return;
       }
-    })();
+      if (result.type === "success") {
+        getAccessToken();
+      }
+    }
   }, [result]);
+
 
   return (
     <ImageBackground
@@ -107,12 +184,12 @@ export default function Auth({ navigation }) {
           >
             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.button, styles.signUpButton]}
             onPress={() => navigation.navigate("DetailInquiry")}
           >
             <Text style={styles.buttonText}>Create New Account</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
      

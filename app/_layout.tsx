@@ -37,6 +37,7 @@ type RootStackParamList = {
   RecipeCollection: { recipe: Recipe[]; title: any };
   DetailInquiry: undefined;
   QuestionScreen: undefined;
+  ProfileScreen:undefined;
 };
 
 type TabParamList = {
@@ -76,6 +77,11 @@ const HomeStack: React.FC = () => {
         name="QuestionScreen"
         component={QuestionScreen}
         options={{ title: "Questions" }}
+      />
+       <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
@@ -168,9 +174,9 @@ const TabNavigator: React.FC = () => {
             }}
           />
           <Tab.Screen
-            name="Profile"
+            name="Profile" // Add the ProfileScreen here
             component={ProfileScreen}
-            options={{ headerShown: false }}
+            options={{ headerShown: false }} // Optionally hide the header
           />
         </Tab.Navigator>
 
@@ -186,6 +192,7 @@ const TabNavigator: React.FC = () => {
     </GestureHandlerRootView>
   );
 };
+
 
 const linking = {
   prefixes: ["myapp://", "http://localhost:8081"],
@@ -230,6 +237,7 @@ const Layout: React.FC = () => (
     </Stack.Navigator>
   </NavigationContainer>
 );
+
 
 const styles = StyleSheet.create({
   contentContainer: {
