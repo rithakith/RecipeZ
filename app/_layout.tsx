@@ -31,7 +31,7 @@ type RootStackParamList = {
   RecipeCollection: { recipe: Recipe[]; title: any };
   DetailInquiry: undefined;
   QuestionScreen: undefined;
-  ProfileScreen:undefined;
+  ProfileScreen: undefined;
 };
 
 type TabParamList = {
@@ -71,7 +71,7 @@ const HomeStack: React.FC = () => {
         component={QuestionScreen}
         options={{ title: "Questions" }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
         options={{ headerShown: false }}
@@ -165,12 +165,10 @@ const TabNavigator: React.FC = () => {
   );
 };
 
-
 const linking = {
-  prefixes: ["myapp://", "http://localhost:8081"],
+  prefixes: ["com.ritzy0717.RecipeZ://", "http://localhost:8081"],
   config: {
     screens: {
-
       Landing: "landing",
       Home: "home",
       DetailInquiry: "detail-inquiry",
@@ -210,7 +208,6 @@ const Layout: React.FC = () => (
     </Stack.Navigator>
   </NavigationContainer>
 );
-
 
 const styles = StyleSheet.create({
   contentContainer: {

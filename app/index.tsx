@@ -7,7 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 const App = () => 
 <AuthProvider>
 
-<Layout />;
+<Layout/>
 
 
 </AuthProvider>
