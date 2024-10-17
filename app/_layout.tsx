@@ -60,7 +60,7 @@ const HomeStack: React.FC = () => {
       <Stack.Screen
         name="Ingredients"
         component={IngredientsScreen}
-        options={{ title: "Recipe Details" }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="RecipeCollection"
