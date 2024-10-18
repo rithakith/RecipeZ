@@ -19,8 +19,9 @@ WebBrowser.maybeCompleteAuthSession();
 const CLIENT_ID = "SgfaNj1qXJGFCaIOkmdhj020Zmsa";
 const url = process.env.EXPO_PUBLIC_API_URL;
 
+
+
 export default function Auth({navigation}) {
-  // const { saveToken, saveUserData } = useContext(AuthContext); // Get saveToken and saveUserData from AuthContext
 
   const discovery = AuthSession.useAutoDiscovery(
     "https://api.asgardeo.io/t/org606kb/oauth2/token"
@@ -34,6 +35,17 @@ export default function Auth({navigation}) {
   });
 
   console.log("redirecturi",redirectUri);
+
+  const storeUserData = async (userData, token) => {
+    try {
+      await AsyncStorage.setItem("userData", JSON.stringify(userData));
+      await AsyncStorage.setItem("authToken", token);
+      console.log("User data and token saved successfully");
+    } catch (error) {
+      console.log("Error saving user data:", error);
+    }
+  };
+  
 
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -130,6 +142,7 @@ export default function Auth({navigation}) {
 
         // saveToken(data.id_token); // Save token to context
         // saveUserData(decoded); // Save user data to context
+        await storeUserData(decoded, data.id_token);
         await sendUserData(decoded);
         console.log("navigate now");
         navigation.navigate("DetailInquiry");
@@ -184,18 +197,24 @@ export default function Auth({navigation}) {
     checkForToken(); // Check for token on component mount
   }, []);
 
+  // useEffect(() => {
+  //   if (result) {
+  //     if (result.error) {
+  //       Alert.alert(
+  //         "Authentication error",
+  //         result.params.error_description || "Something went wrong"
+  //       );
+  //       return;
+  //     }
+  //     if (result.type === "success") {
+  //       getAccessToken(navigation);
+  //     }
+  //   }
+  // }, [result]);
+
   useEffect(() => {
-    if (result) {
-      if (result.error) {
-        Alert.alert(
-          "Authentication error",
-          result.params.error_description || "Something went wrong"
-        );
-        return;
-      }
-      if (result.type === "success") {
-        getAccessToken(navigation);
-      }
+    if (result?.type === "success" && result.params?.code) {
+      getAccessToken(result.params.code);
     }
   }, [result]);
 

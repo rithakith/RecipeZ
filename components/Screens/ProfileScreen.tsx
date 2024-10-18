@@ -1,23 +1,52 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { AuthContext } from "../navigation/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen() {
-  const { userData } = useContext(AuthContext);
   const navigation = useNavigation(); // Hook to navigate between screens
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [token, setToken] = useState(null);
   const url = process.env.EXPO_PUBLIC_API_URL;
-console.log("user");
+
   useEffect(() => {
-    // Check if the user exists when the component mounts
+    // Retrieve stored user data and token on component mount
+    const fetchStoredData = async () => {
+      await retrieveUserData();
+    };
+    fetchStoredData();
+  }, []);
+
+  useEffect(() => {
+    // Check if the user exists when the userData is available
     if (userData && userData.sub) {
       checkUserExists(userData.sub);
     }
   }, [userData]);
 
+  const retrieveUserData = async () => {
+    try {
+      const storedUserData = await AsyncStorage.getItem("userData");
+      const storedToken = await AsyncStorage.getItem("authToken");
+
+      if (storedUserData) {
+        const parsedUserData = JSON.parse(storedUserData);
+        console.log("User Data:", parsedUserData);
+        setUserData(parsedUserData); // Set user data in state
+      }
+
+      if (storedToken) {
+        setToken(storedToken); // Set token in state
+      }
+    } catch (error) {
+      console.log("Error retrieving user data:", error);
+    }
+  };
+
   const checkUserExists = async (sub) => {
     try {
+      console.log("sub", sub);
       const response = await fetch(`${url}/api/${sub}`, {
         method: 'GET',
       });

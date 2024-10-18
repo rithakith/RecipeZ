@@ -10,14 +10,13 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
  import { useContext } from "react";
+ import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { AuthContext } from "../navigation/AuthContext";
 import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 type QuestionScreenProps = {};
 
 const QuestionScreen: React.FC<QuestionScreenProps> = () => {
-  const { userData } = useContext(AuthContext);
   const navigation = useNavigation();
   const route = useRoute(); // U
 
@@ -25,7 +24,37 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [userData, setUserData] = useState(null);
+  const [token, setToken] = useState(null);
 
+  useEffect(() => {
+    // Retrieve stored user data and token on component mount
+    const fetchStoredData = async () => {
+      await retrieveUserData();
+    };
+    fetchStoredData();
+  }, []);
+
+
+
+  const retrieveUserData = async () => {
+    try {
+      const storedUserData = await AsyncStorage.getItem("userData");
+      const storedToken = await AsyncStorage.getItem("authToken");
+
+      if (storedUserData) {
+        const parsedUserData = JSON.parse(storedUserData);
+        console.log("User Data:", parsedUserData);
+        setUserData(parsedUserData); // Set user data in state
+      }
+
+      if (storedToken) {
+        setToken(storedToken); // Set token in state
+      }
+    } catch (error) {
+      console.log("Error retrieving user data:", error);
+    }
+  };
 
   const questions = [
     {
