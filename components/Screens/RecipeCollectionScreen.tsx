@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import RecipeCardSearch from "../UI/RecipeCardSearch";
+import Icon from "react-native-vector-icons/FontAwesome"; // Import FontAwesome icons
 
 type Recipe = {
   title: string;
@@ -58,17 +59,27 @@ const RecipeCollection: React.FC<RecipeCollectionProps> = () => {
       </View>
       <Text style={styles.search}>Search Results: </Text>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {recipes.map((recipe, index) => (
-          <RecipeCardSearch
-            key={index}
-            recipe={recipe}
-            onFavoriteToggle={() =>
-              console.log(`Toggled favorite for: ${recipe.title}`)
-            }
-            isFavorite={false} // This can be managed by state if needed
-            onRecipeSelect={() => handleRecipeSelect(recipe)}
-          />
-        ))}
+        {/* display recipes if available or show no results screen */}
+        {recipes.length ? (
+          recipes.map((recipe, index) => (
+            <RecipeCardSearch
+              key={index}
+              recipe={recipe}
+              onFavoriteToggle={() =>
+                console.log(`Toggled favorite for: ${recipe.title}`)
+              }
+              isFavorite={false} // This can be managed by state if needed
+              onRecipeSelect={() => handleRecipeSelect(recipe)}
+            />
+          ))
+        ) : (
+          // <Text style={styles.noResult}>No results found</Text>
+          // no results found message with a image
+          <View style={styles.noResultSection}>
+            <Text style={styles.noResult}>No results found</Text>
+            <Icon name="times" size={60} color="#70b9b3" />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -107,6 +118,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  noResultSection: {
+    flex: 1,
+    paddingTop: "50%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noResult: {
+    fontSize: 32,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
 

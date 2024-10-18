@@ -29,7 +29,6 @@ import AuthScreen from "@/components/Screens/AuthScreen";
 
 type RootStackParamList = {
   Landing: undefined;
-  Home: undefined;
   Ingredients: { recipe: any };
   RecipeCollection: { recipe: Recipe[]; title: any };
   DetailInquiry: undefined;
@@ -41,6 +40,11 @@ type TabParamList = {
   Search: undefined;
   Bot: undefined;
   Profile: undefined;
+};
+
+type HomeStackParamList = {
+  HomeScreen: undefined;
+  Ingredients: { recipe: any };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
