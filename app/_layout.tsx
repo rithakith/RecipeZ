@@ -12,10 +12,8 @@ import {
 } from "react-native";
 import {
   BottomSheetModal,
-  // BottomSheetView,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-// import BottomSheet from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import LandingScreen from "@/components/Screens/LandingScreen";
@@ -27,7 +25,6 @@ import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
 import QuestionScreen from "@/components/Screens/QuestionScreen";
 import InteractiveBottomSheet from "@/components/UI/InteractiveBottomSheet";
 import ProfileScreen from "@/components/Screens/ProfileScreen";
-
 import AuthScreen from "@/components/Screens/AuthScreen";
 
 type RootStackParamList = {
@@ -48,6 +45,7 @@ type TabParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
+const EmptyComponent: React.FC = () => null;
 
 const HomeStack: React.FC = () => {
   return (
@@ -63,11 +61,6 @@ const HomeStack: React.FC = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="RecipeCollection"
-        component={RecipeCollection}
-        options={{ title: "Recipe filters" }}
-      />
-      <Stack.Screen
         name="DetailInquiry"
         component={DetailInquiryScreen}
         options={{ title: "Detail Inquiry" }}
@@ -76,6 +69,23 @@ const HomeStack: React.FC = () => {
         name="QuestionScreen"
         component={QuestionScreen}
         options={{ title: "Questions" }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const SearchStack: React.FC = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RecipeCollection"
+        component={RecipeCollection}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
@@ -152,18 +162,19 @@ const TabNavigator: React.FC = () => {
           />
           <Tab.Screen
             name="Search"
-            component={SearchScreen}
+            component={SearchStack}
             options={{ headerShown: false }}
           />
           <Tab.Screen
             name="Bot"
-            component={() => null}
+            component={EmptyComponent}
             options={{
               title: "Bot",
               tabBarButton: (props) => (
-                <TouchableOpacity {...props} onPress={handlePresentModalPress}>
-                  {/* <Ionicons name="restaurant" size={24} color="gray" /> */}
-                </TouchableOpacity>
+                <TouchableOpacity
+                  {...props}
+                  onPress={handlePresentModalPress}
+                ></TouchableOpacity>
               ),
             }}
           />

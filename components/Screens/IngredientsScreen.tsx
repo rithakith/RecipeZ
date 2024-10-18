@@ -10,7 +10,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome"; // Import FontAwesome icons
-import { LinearGradient } from "expo-linear-gradient";
 
 type Recipe = {
   recipe_id: number;
