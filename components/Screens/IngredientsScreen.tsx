@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/FontAwesome"; // Import FontAwesome icons
+import { LinearGradient } from "expo-linear-gradient";
 
 type Recipe = {
   recipe_id: number;
@@ -61,36 +63,79 @@ const IngredientsScreen: React.FC<IngredientsScreenProps> = ({ route }) => {
         style={styles.closeButton}
         onPress={() => navigation.goBack()}
       >
-        <Ionicons name="close" size={28} color="#fff" />
+        <Ionicons name="close" size={20} color="#fff" />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.heartButton}>
-        <Ionicons name="heart" size={28} color="#fff" />
+        <Ionicons name="heart" size={20} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.details}>
-        <Text style={styles.title}>{recipe.title}</Text>
-        <Text style={styles.time}>{recipe.cook_time} mins</Text>
-        <Text style={styles.rating}>
-          {recipe.ratings.rating_count} has voted for this{" "}
-        </Text>
-        <Text style={styles.rating}>
-          {recipe.ratings.average_rating} average rating{" "}
-        </Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>{recipe.title}</Text>
+          <View style={styles.time}>
+            <Ionicons name="time-outline" size={18} color="#666" />
+            <Text style={{ fontSize: 16 }}>{recipe.cook_time} mins</Text>
+          </View>
+        </View>
+        <View style={styles.subHeading}>
+          <Text style={styles.rating}>⭐️ {recipe.ratings.average_rating}</Text>
+          <Text style={styles.reviewCount}>
+            ({recipe.ratings.rating_count} Ratings)
+          </Text>
+        </View>
 
         <Text style={styles.description}>{recipe.description}</Text>
-        <View style={styles.stats}>
-          <Text style={styles.stat}>
-            Carbs: {recipe.nutrition.carbohydrates}g
-          </Text>
-          <Text style={styles.stat}>Protein: {recipe.nutrition.protein}g</Text>
-          <Text style={styles.stat}>
-            Calories: {recipe.nutrition.calories} kcal
-          </Text>
-          <Text style={styles.stat}>Fat: {recipe.nutrition.fat}g</Text>
-          <Text style={styles.stat}>Fiber: {recipe.nutrition.fiber}g</Text>
-          <Text style={styles.stat}>Sugar: {recipe.nutrition.sugar}g</Text>
+
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <View style={styles.nutriIcon}>
+              <Icon name="fire" size={20} color="#042628" />
+            </View>
+            <Text style={styles.statText}>
+              Calories: {recipe.nutrition.calories} kcal
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <View style={styles.nutriIcon}>
+              <Icon name="pie-chart" size={20} color="#042628" />
+            </View>
+            <Text style={styles.statText}>
+              Carbs: {recipe.nutrition.carbohydrates}g
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <View style={styles.nutriIcon}>
+              <Icon name="balance-scale" size={20} color="#042628" />
+            </View>
+            <Text style={styles.statText}>
+              Protein: {recipe.nutrition.protein}g
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <View style={styles.nutriIcon}>
+              <Icon name="tint" size={20} color="#042628" />
+            </View>
+            <Text style={styles.statText}>Fat: {recipe.nutrition.fat}g</Text>
+          </View>
+          <View style={styles.statItem}>
+            <View style={styles.nutriIcon}>
+              <Icon name="leaf" size={20} color="#042628" />
+            </View>
+            <Text style={styles.statText}>
+              Fiber: {recipe.nutrition.fiber}g
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <View style={styles.nutriIcon}>
+              <Icon name="cube" size={20} color="#042628" />
+            </View>
+            <Text style={styles.statText}>
+              Sugar: {recipe.nutrition.sugar}g
+            </Text>
+          </View>
         </View>
+
         <View style={styles.tab}>
           <TouchableOpacity
             style={[
@@ -127,6 +172,7 @@ const IngredientsScreen: React.FC<IngredientsScreenProps> = ({ route }) => {
             </Text>
           </TouchableOpacity>
         </View>
+
         {activeTab === "Ingredients"
           ? recipe.ingredients.map((ingredient, index) => (
               <View key={index} style={styles.ingredient}>
@@ -139,7 +185,9 @@ const IngredientsScreen: React.FC<IngredientsScreenProps> = ({ route }) => {
             ))
           : recipe.steps.map((step, index) => (
               <TouchableOpacity key={index} style={styles.step}>
-                <Text style={styles.stepText}>{step}</Text>
+                <Text style={styles.stepText}>
+                  {index + 1}. {step}
+                </Text>
               </TouchableOpacity>
             ))}
       </View>
@@ -156,6 +204,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 10,
+    padding: 5,
   },
   heartButton: {
     position: "absolute",
@@ -164,47 +213,103 @@ const styles = StyleSheet.create({
     zIndex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 10,
+    padding: 5,
   },
   image: { width: "100%", height: 250 },
   details: {
     padding: 20,
+    paddingTop: 30,
     backgroundColor: "#fff",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     marginTop: -30,
   },
-  title: { fontSize: 24, fontWeight: "bold" },
-  time: { fontSize: 14, color: "#666" },
-  rating: { fontSize: 16, color: "#333" },
-  description: { fontSize: 16, color: "#333", marginVertical: 10 },
-  stats: {
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  title: { fontSize: 28, fontWeight: "bold" },
+  time: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  subHeading: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: -2,
+  },
+  rating: { fontSize: 16, color: "#333", fontWeight: "bold" },
+  reviewCount: { fontSize: 16, color: "#666" },
+  description: { fontSize: 18, color: "#333", marginVertical: 10 },
+  statsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginVertical: 10,
+    justifyContent: "space-around",
+    marginVertical: 15,
+    gap: 2,
   },
-  stat: { fontSize: 14, color: "#666", width: "50%" },
+  statItem: {
+    width: "47%",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  nutriIcon: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#dedede",
+    padding: 1,
+    borderRadius: 10,
+  },
+  statText: {
+    fontSize: 14,
+    color: "#333",
+    marginLeft: 6,
+    fontWeight: "bold",
+  },
   tab: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10,
+    marginHorizontal: 10,
+    padding: 6,
+    backgroundColor: "#dedede",
+    borderRadius: 15,
   },
-  tabButton: { padding: 10 },
-  activeTab: { backgroundColor: "#000" },
-  activeTabText: { color: "#fff" },
-  tabText: { color: "#000" },
+  tabButton: {
+    padding: 10,
+    width: "50%",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  activeTab: { backgroundColor: "#042628" },
+  activeTabText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
+  tabText: { color: "#000", fontWeight: "bold", fontSize: 16 },
   step: {
     padding: 15,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#fff",
     marginVertical: 5,
     borderRadius: 10,
+    elevation: 3,
+    marginHorizontal: 10,
   },
   stepText: { fontSize: 16, fontWeight: "bold" },
   ingredient: {
-    padding: 15,
-    backgroundColor: "#f0f0f0",
-    marginVertical: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    backgroundColor: "#fff",
+    marginVertical: 4,
+    marginHorizontal: 10,
     borderRadius: 10,
+    elevation: 3,
   },
   ingredientText: { fontSize: 16, fontWeight: "bold", color: "#333" },
   detailText: { fontSize: 14, color: "#666" },
