@@ -161,7 +161,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       </View>
 
       {/* Recommended Recipes Section */}
-      <View style={styles.section}>
+      <View style={(styles.section, styles.lastSection)}>
         <Text style={styles.sectionTitle}>Recommended Just for You</Text>
         <ScrollView
           horizontal
@@ -187,18 +187,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingTop: 20,
+    // paddingBottom: 100,
   },
   header: { paddingHorizontal: 25, paddingVertical: 25 },
   image: { width: 20, height: 20 },
   greeting: { fontSize: 28, fontWeight: "bold" },
   question: { fontSize: 16 },
-  section: { marginVertical: 10 },
+  section: { marginTop: 10, marginBottom: 15 },
   sectionTitle: {
     fontSize: 22,
     fontWeight: "bold",
     marginVertical: 10,
     marginLeft: 25,
   },
+  lastSection: { marginBottom: 40 },
 });
 
 export default HomeScreen;

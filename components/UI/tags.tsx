@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   seeMoreButton: {
     position: "absolute",
     top: -35,
-    right: 25,
+    right: 20,
   },
   seeMoreText: {
     color: "#70B9BE",

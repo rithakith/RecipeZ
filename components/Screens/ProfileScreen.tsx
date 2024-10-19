@@ -62,6 +62,7 @@ const ProfileScreen: React.FC = () => {
     }
   }, [userData]);
 
+
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
@@ -69,14 +70,14 @@ const ProfileScreen: React.FC = () => {
         const data: Recipe[] = await response.json();
         setRecipes(data);
       } catch (error) {
-        // console.error("Error fetching recipes:", error);
+        console.error("Error fetching recipes:", error);
       }
     };
     fetchRecipes();
   }, []);
 
   const handleRecipeSelect = (recipe: Recipe) => {
-    // console.log(recipe);
+    console.log(recipe);
     navigation.navigate("Ingredients", { recipe });
   };
 
@@ -135,7 +136,7 @@ const ProfileScreen: React.FC = () => {
       return false;
     }
   };
-
+    
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
@@ -163,14 +164,6 @@ const ProfileScreen: React.FC = () => {
           <Text style={styles.uname}>{user?.user_name || "N/A"}</Text>
           <Text style={styles.email}>{user?.email || "N/A"}</Text>
         </View>
-
-        {/*        
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Current Ingredients:</Text>
-          <Text style={styles.value}>
-            {user?.current_ingredients?.join(",") || "None"}
-          </Text>
-        </View> */}
 
         <View style={styles.section2}>
           {/* Allergies */}
@@ -347,19 +340,6 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: "#333",
-  },
-  section2: {
-    width: "100%",
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-    backgroundColor: "#E8FEFF",
-    borderRadius: 15,
-    marginTop: 10,
-    marginBottom: 10,
-    marginHorizontal: 20,
-    position: "relative",
-    elevation: 3,
-    shadowColor: "#000",
   },
   section2: {
     width: "100%",
