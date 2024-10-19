@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -8,12 +8,9 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
- import { useContext } from "react";
- import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { useRoute } from "@react-navigation/native";
-import { useEffect } from "react";
 type QuestionScreenProps = {};
 
 const QuestionScreen: React.FC<QuestionScreenProps> = () => {
@@ -35,8 +32,6 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
     };
     fetchStoredData();
   }, []);
-
-
 
   const retrieveUserData = async () => {
     try {
@@ -97,46 +92,45 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
     } else {
       // Log all selected answers when finishing
       const apiData = {
-      user_name: userData.preferred_username,
-      sub: userData.sub,
-      email: userData.email,
-      user_allergies: selectedAnswers[1] ? [selectedAnswers[1]] : [], // Food allergies
-      dietary_preferences: {
-        diet_type: selectedAnswers[0], // Dietary preference
-      },
-      current_ingredients: ingredients, // Current ingredients
-      health_goals: {
-        diet_type: selectedAnswers[3], // Health goal
-        weight_goal: 60, // Replace with the user's weight goal if applicable
-        calorie_limit: 2000, // Replace with the user's calorie limit if applicable
-      },
-      favorited_recipes: {},
-    };
-
-    try {
-      console.log("userdata",userData.sub);
-      const response = await fetch(`${url}/api/users`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+        user_name: userData.preferred_username,
+        sub: userData.sub,
+        email: userData.email,
+        user_allergies: selectedAnswers[1] ? [selectedAnswers[1]] : [], // Food allergies
+        dietary_preferences: {
+          diet_type: selectedAnswers[0], // Dietary preference
         },
-        body: JSON.stringify(apiData),
-      });
+        current_ingredients: ingredients, // Current ingredients
+        health_goals: {
+          diet_type: selectedAnswers[3], // Health goal
+          weight_goal: 60, // Replace with the user's weight goal if applicable
+          calorie_limit: 2000, // Replace with the user's calorie limit if applicable
+        },
+        favorited_recipes: {},
+      };
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      try {
+        console.log("userdata", userData.sub);
+        const response = await fetch(`${url}/api/users`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(apiData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const responseData = await response.json();
+        console.log("API response:", responseData); // Handle response if needed
+      } catch (error) {
+        console.error("Error sending data:", error);
       }
 
-      const responseData = await response.json();
-      console.log("API response:", responseData); // Handle response if needed
-    } catch (error) {
-      console.error("Error sending data:", error);
-    }
-
-    // Log all selected answers when finishing
-    console.log("Selected answers:", selectedAnswers);
-    navigation.navigate("Home");
-  
+      // Log all selected answers when finishing
+      console.log("Selected answers:", selectedAnswers);
+      navigation.navigate("Home");
     }
   };
 
@@ -156,7 +150,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
   const handleAnswerSelect = (answer: string) => {
     // Log the selected answer
     console.log("Selected answer for step", step, ":", answer);
-    
+
     // Update the selected answers state
     setSelectedAnswers((prevAnswers) => {
       const updatedAnswers = [...prevAnswers];
@@ -167,7 +161,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
       }
       return updatedAnswers;
     });
-    
+
     handleNext(); // Move to the next question
   };
 
@@ -388,24 +382,29 @@ const styles = StyleSheet.create({
     borderColor: "#70B9BE",
     borderTopRightRadius: 15,
     borderBottomRightRadius: 15,
+    padding: 10,
   },
   addButtonText: {
-    fontSize: 20,
     color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
   },
   ingredientList: {
-    marginTop: 20,
+    marginTop: 10,
   },
   ingredientContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
   },
   ingredientItem: {
-    fontSize: 16,
-    padding: 5,
-    borderRadius: 10,
-    backgroundColor: "#d3d3d3",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#042628",
+    color: "white",
     marginVertical: 5,
+    marginRight: 10,
+    borderRadius: 15,
   },
 });
 
