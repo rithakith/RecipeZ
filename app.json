@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "com.ritzy0717.recipez",
-    "platforms": ["ios", "android"],
+    "platforms": ["ios", "android", "web"],
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/logo-splash.png",
