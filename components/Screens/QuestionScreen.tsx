@@ -19,6 +19,7 @@ type QuestionScreenProps = {};
 const QuestionScreen: React.FC<QuestionScreenProps> = () => {
   const navigation = useNavigation();
   const route = useRoute(); // U
+  const url = process.env.EXPO_PUBLIC_API_URL;
 
   const [step, setStep] = useState(1);
   const [ingredients, setIngredients] = useState<string[]>([]);
@@ -113,7 +114,8 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8083/api/users", {
+      console.log("userdata",userData.sub);
+      const response = await fetch(`${url}/api/users`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

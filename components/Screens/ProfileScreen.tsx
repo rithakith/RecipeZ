@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen() {
-  const navigation = useNavigation(); // Hook to navigate between screens
+  const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [token, setToken] = useState(null);
   const url = process.env.EXPO_PUBLIC_API_URL;
 
-  useEffect(() => {
-    // Retrieve stored user data and token on component mount
-    const fetchStoredData = async () => {
-      await retrieveUserData();
-    };
-    fetchStoredData();
-  }, []);
+  // Fetch data when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const fetchStoredData = async () => {
+        await retrieveUserData();
+      };
+      fetchStoredData();
+    }, [])
+  );
 
   useEffect(() => {
-    // Check if the user exists when the userData is available
     if (userData && userData.sub) {
       checkUserExists(userData.sub);
     }
@@ -33,11 +34,11 @@ export default function ProfileScreen() {
       if (storedUserData) {
         const parsedUserData = JSON.parse(storedUserData);
         console.log("User Data:", parsedUserData);
-        setUserData(parsedUserData); // Set user data in state
+        setUserData(parsedUserData);
       }
 
       if (storedToken) {
-        setToken(storedToken); // Set token in state
+        setToken(storedToken);
       }
     } catch (error) {
       console.log("Error retrieving user data:", error);
@@ -48,23 +49,23 @@ export default function ProfileScreen() {
     try {
       console.log("sub", sub);
       const response = await fetch(`${url}/api/${sub}`, {
-        method: 'GET',
+        method: "GET",
       });
 
       if (response.ok) {
         const data = await response.json(); // Parse JSON response
         setUser(data); // Set user data
+        console.log("User data from API:", data);
         return true;
       } else if (response.status === 404) {
-        // User does not exist
-        setUser(null); // Clear user state if not found
+        setUser(null);
         return false;
       } else {
-        throw new Error('Error checking user existence');
+        throw new Error("Error checking user existence");
       }
     } catch (err) {
-      console.error('Error checking user existence:', err);
-      return false; // Consider user does not exist in case of error
+      console.error("Error checking user existence:", err);
+      return false;
     }
   };
 
@@ -73,17 +74,52 @@ export default function ProfileScreen() {
       <Text style={styles.title}>Profile Information</Text>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Username:</Text>
-        <Text style={styles.value}>{userData?.preferred_username || "N/A"}</Text>
+        <Text style={styles.value}>{user?.user_name || "N/A"}</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{userData?.email || "N/A"}</Text>
+        <Text style={styles.value}>{user?.email || "N/A"}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Allergies:</Text>
+        <Text style={styles.value}>
+          {Array.isArray(user?.user_allergies)
+            ? user.user_allergies.join(", ")
+            : "None"}
+        </Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Dietary Preferences:</Text>
+        <Text style={styles.value}>
+          {user?.dietary_preferences?.diet_type || "None"}
+        </Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Health Goals:</Text>
+        <Text style={styles.value}>
+          {user?.dietary_preferences?.diet_type || "None"}
+        </Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Current Ingredients:</Text>
+        <Text style={styles.value}>
+          {user?.current_ingredients?.join(",") || "None"}
+        </Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Favorited Recipes:</Text>
+        <Text style={styles.value}>
+          {user?.favorited_recipes?.length > 0
+            ? user.favorited_recipes.join(", ")
+            : "No favorite recipes"}
+        </Text>
       </View>
 
-      {/* Button to edit personal details */}
-      <TouchableOpacity 
-        style={styles.editButton} 
-        onPress={() => navigation.navigate("QuestionScreen", { resetToFirstStep: true })} // Pass a parameter
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() =>
+          navigation.navigate("QuestionScreen", { resetToFirstStep: true })
+        }
       >
         <Text style={styles.editButtonText}>Edit Personal Details</Text>
       </TouchableOpacity>
@@ -123,7 +159,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
-    backgroundColor: "#70B9BE", // Button color
+    backgroundColor: "#70B9BE",
   },
   editButtonText: {
     color: "white",
