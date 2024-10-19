@@ -9,15 +9,53 @@ import {
   Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+ import { useContext } from "react";
+ import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { useRoute } from "@react-navigation/native";
+import { useEffect } from "react";
 type QuestionScreenProps = {};
 
 const QuestionScreen: React.FC<QuestionScreenProps> = () => {
+  const navigation = useNavigation();
+  const route = useRoute(); // U
+  const url = process.env.EXPO_PUBLIC_API_URL;
+
   const [step, setStep] = useState(1);
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [userData, setUserData] = useState(null);
+  const [token, setToken] = useState(null);
 
-  const navigation = useNavigation();
+  useEffect(() => {
+    // Retrieve stored user data and token on component mount
+    const fetchStoredData = async () => {
+      await retrieveUserData();
+    };
+    fetchStoredData();
+  }, []);
+
+
+
+  const retrieveUserData = async () => {
+    try {
+      const storedUserData = await AsyncStorage.getItem("userData");
+      const storedToken = await AsyncStorage.getItem("authToken");
+
+      if (storedUserData) {
+        const parsedUserData = JSON.parse(storedUserData);
+        console.log("User Data:", parsedUserData);
+        setUserData(parsedUserData); // Set user data in state
+      }
+
+      if (storedToken) {
+        setToken(storedToken); // Set token in state
+      }
+    } catch (error) {
+      console.log("Error retrieving user data:", error);
+    }
+  };
 
   const questions = [
     {
@@ -45,12 +83,60 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
   ];
 
   const currentQuestion = questions.find((q) => q.step === step);
+  useEffect(() => {
+    if (route.params?.resetToFirstStep) {
+      setStep(1); // Reset to the first step
+      setIngredients([]); // Optionally reset ingredients
+      setSelectedAnswers([]); // Optionally reset selected answers
+    }
+  }, [route.params?.resetToFirstStep]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 4) {
       setStep(step + 1);
     } else {
-      navigation.navigate("Home");
+      // Log all selected answers when finishing
+      const apiData = {
+      user_name: userData.preferred_username,
+      sub: userData.sub,
+      email: userData.email,
+      user_allergies: selectedAnswers[1] ? [selectedAnswers[1]] : [], // Food allergies
+      dietary_preferences: {
+        diet_type: selectedAnswers[0], // Dietary preference
+      },
+      current_ingredients: ingredients, // Current ingredients
+      health_goals: {
+        diet_type: selectedAnswers[3], // Health goal
+        weight_goal: 60, // Replace with the user's weight goal if applicable
+        calorie_limit: 2000, // Replace with the user's calorie limit if applicable
+      },
+      favorited_recipes: {},
+    };
+
+    try {
+      console.log("userdata",userData.sub);
+      const response = await fetch(`${url}/api/users`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(apiData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const responseData = await response.json();
+      console.log("API response:", responseData); // Handle response if needed
+    } catch (error) {
+      console.error("Error sending data:", error);
+    }
+
+    // Log all selected answers when finishing
+    console.log("Selected answers:", selectedAnswers);
+    navigation.navigate("Home");
+  
     }
   };
 
@@ -65,6 +151,24 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
       setIngredients([...ingredients, inputValue]);
       setInputValue("");
     }
+  };
+
+  const handleAnswerSelect = (answer: string) => {
+    // Log the selected answer
+    console.log("Selected answer for step", step, ":", answer);
+    
+    // Update the selected answers state
+    setSelectedAnswers((prevAnswers) => {
+      const updatedAnswers = [...prevAnswers];
+      if (updatedAnswers[step - 1]) {
+        updatedAnswers[step - 1] = answer; // Replace if already exists
+      } else {
+        updatedAnswers.push(answer); // Add new answer
+      }
+      return updatedAnswers;
+    });
+    
+    handleNext(); // Move to the next question
   };
 
   const renderIngredient = ({ item }: { item: string }) => (
@@ -121,7 +225,11 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
       ) : (
         <View style={styles.answerSection}>
           {currentQuestion?.answers.map((answer, index) => (
-            <TouchableOpacity key={index} style={styles.answerButton}>
+            <TouchableOpacity
+              key={index}
+              style={styles.answerButton}
+              onPress={() => handleAnswerSelect(answer)} // Log the answer when selected
+            >
               <Text style={styles.answerText}>{answer}</Text>
             </TouchableOpacity>
           ))}
@@ -280,29 +388,24 @@ const styles = StyleSheet.create({
     borderColor: "#70B9BE",
     borderTopRightRadius: 15,
     borderBottomRightRadius: 15,
-    padding: 10,
   },
   addButtonText: {
-    color: "white",
     fontSize: 20,
-    fontWeight: "bold",
+    color: "white",
   },
   ingredientList: {
-    marginTop: 10,
+    marginTop: 20,
   },
   ingredientContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  ingredientItem: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: "#042628",
-    color: "white",
+  },
+  ingredientItem: {
+    fontSize: 16,
+    padding: 5,
+    borderRadius: 10,
+    backgroundColor: "#d3d3d3",
     marginVertical: 5,
-    marginRight: 10,
-    borderRadius: 15,
   },
 });
 
