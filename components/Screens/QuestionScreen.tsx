@@ -102,7 +102,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
         },
         current_ingredients: ingredients, // Current ingredients
         health_goals: {
-          diet_type: selectedAnswers[3], // Health goal
+          diet_type: selectedAnswers[2], // Health goal
           weight_goal: 60, // Replace with the user's weight goal if applicable
           calorie_limit: 2000, // Replace with the user's calorie limit if applicable
         },
@@ -163,7 +163,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
       return updatedAnswers;
     });
 
-    handleNext(); // Move to the next question
+    // handleNext(); // Move to the next question
   };
 
   const renderIngredient = ({ item }: { item: string }) => (
