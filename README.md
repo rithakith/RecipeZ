@@ -30,16 +30,16 @@ RecipeZ is built using a multi-tier architecture that consists of the following 
 1. **Clone the Repositories**
    
    ```bash
-   git clone https://github.com/yourusername/RecipeZ.git
-   git clone https://github.com/yourusername/RecipeZ_Backend.git
+   git clone https://github.com/rithakith/iwb294-team-raas.git
+   git clone https://github.com/rithakith/iwb294-team-raas_Backend.git
 
 2. **Set Up the Environment**
-- **Frontend:** Create a .env file in the RecipeZ root folder and add:
+- **Frontend:** Create a .env file in the iwb294-team-raas root folder and add:
   
    ```bash
    EXPO_PUBLIC_API_URL=http://192.168.43.52:8083
    
-- **Backend:** In the RecipeZ_Backend folder, add a Config.toml file in the root folder with the following content:
+- **Backend:** In the iwb294-team-raas_Backend folder, add a Config.toml file in the root folder with the following content:
 
    ```bash
    USER="root"
@@ -50,23 +50,23 @@ RecipeZ is built using a multi-tier architecture that consists of the following 
 - **Recipe Recommender:** In the recipe_recommender folder, create a .env file and add:
 
    ```bash
-   API_KEY=AIzaSyDV7anqM4VSAI7aumG7S3QmeZZxCZZ79mQ
+   API_KEY=Your_API_Key
    IPADDRESS=192.168.43.52
 
 3. **Running the Backend (Ballerina)**
-- In the root folder of RecipeZ_Backend, execute the Ballerina code:
+- In the root folder of iwb294-team-raas_Backend, execute the Ballerina code:
 
    ```bash
    bal run
 
 4. **Running the Recipe Recommender**
-- In a new terminal, navigate to RecipeZ_Backend and execute:
+- In a new terminal, navigate to iwb294-team-raas_Backend and execute:
 
    ```bash
    python recommender.py
 
 5. **Running the Frontend**
-- In the root folder of RecipeZ, install dependencies:
+- In the root folder of iwb294-team-raas , install dependencies:
 
    ```bash
    npm install
