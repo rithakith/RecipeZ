@@ -62,7 +62,6 @@ const ProfileScreen: React.FC = () => {
     }
   }, [userData]);
 
-
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
@@ -136,7 +135,7 @@ const ProfileScreen: React.FC = () => {
       return false;
     }
   };
-    
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>

@@ -34,8 +34,8 @@ export default function Auth() {
     path: "oauth2",
   });
 
-  console.log("Discovery:", discovery);
-  console.log("redirectUri:", redirectUri);
+  // console.log("Discovery:", discovery);
+  // console.log("redirectUri:", redirectUri);
 
   const storeUserData = async (userData, token) => {
     try {
