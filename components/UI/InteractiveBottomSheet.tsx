@@ -259,11 +259,13 @@ const InteractiveBottomSheet: React.FC = () => {
                 ))}
 
                 <Text style={styles.recipeSectionTitle}>Steps:</Text>
-                {/* {recipe.steps.map((stepText, idx) => (
-                  <Text key={idx} style={styles.recipeText}>
-                    {idx + 1}. {stepText}
-                  </Text>
-                ))} */}
+                {JSON.parse(recipe.steps.replace(/'/g, '"')).map(
+                  (stepText, idx) => (
+                    <Text key={idx} style={styles.recipeText}>
+                      {idx + 1}. {stepText}
+                    </Text>
+                  )
+                )}
 
                 <Text style={styles.recipeText}>
                   Time: {recipe.minutes} minutes
@@ -301,6 +303,7 @@ const styles = StyleSheet.create({
   },
   stepContainerScroll: {
     width: "100%",
+    overflow: "scroll",
   },
   step1Header: {
     flexDirection: "row",
