@@ -1,7 +1,17 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import RecipeCard from '../UI/RecipeCard';
-import { useRoute } from '@react-navigation/native';
+import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import { useRoute } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import RecipeCardSearch from "../UI/RecipeCardSearch";
+import Icon from "react-native-vector-icons/FontAwesome"; // Import FontAwesome icons
 
 type Recipe = {
   title: string;
@@ -18,6 +28,12 @@ type RecipeCollectionProps = {
 const RecipeCollection: React.FC<RecipeCollectionProps> = () => {
   const route = useRoute();
   const { recipes, title } = route.params as RecipeCollectionProps; // Explicitly type the params
+  const navigation = useNavigation(); // Hook to navigate between screens
+
+  const handleRecipeSelect = (recipe: Recipe) => {
+    console.log(recipe);
+    navigation.navigate("Ingredients", { recipe });
+  };
 
   console.log("recipes", recipes);
   if (!recipes) {
@@ -32,16 +48,38 @@ const RecipeCollection: React.FC<RecipeCollectionProps> = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.header}>
+        <Ionicons
+          name="arrow-back"
+          size={24}
+          color="#70b9be"
+          onPress={() => navigation.goBack()}
+        />
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      <Text style={styles.search}>Search Results: </Text>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {recipes.map((recipe, index) => (
-          <RecipeCard
-            key={index}
-            recipe={recipe}
-            onFavoriteToggle={() => console.log(`Toggled favorite for: ${recipe.title}`)}
-            isFavorite={false} // This can be managed by state if needed
-          />
-        ))}
+        {/* display recipes if available or show no results screen */}
+        {recipes.length ? (
+          recipes.map((recipe, index) => (
+            <RecipeCardSearch
+              key={index}
+              recipe={recipe}
+              onFavoriteToggle={() =>
+                console.log(`Toggled favorite for: ${recipe.title}`)
+              }
+              isFavorite={false} // This can be managed by state if needed
+              onRecipeSelect={() => handleRecipeSelect(recipe)}
+            />
+          ))
+        ) : (
+          // <Text style={styles.noResult}>No results found</Text>
+          // no results found message with a image
+          <View style={styles.noResultSection}>
+            <Text style={styles.noResult}>No results found</Text>
+            <Icon name="times" size={60} color="#70b9b3" />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -51,22 +89,48 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f8f8f8',
+    paddingTop: 40,
+    backgroundColor: "#f8f8f8",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 15,
+    fontWeight: "bold",
+  },
+  search: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+    paddingLeft: 10,
   },
   scrollContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "column",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noResultSection: {
+    flex: 1,
+    paddingTop: "50%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noResult: {
+    fontSize: 32,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
 

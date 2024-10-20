@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Tags from "../UI/tags";
-import RecipeCard from "../UI/RecipeCard";
-import backArrow from "../../assets/images/arrow_back.png";
+import RecipeCardSearch from "../UI/RecipeCardSearch";
+import { Ionicons } from "@expo/vector-icons";
 const url = process.env.EXPO_PUBLIC_API_URL;
 
 type Recipe = {
@@ -180,9 +180,12 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ justifyContent: "center" }}
+    >
       <View style={styles.searchContainer}>
-        <Image source={backArrow} style={styles.image} />
+        <Ionicons name="search-outline" size={30} color={"#70b9be"} />
         <TextInput
           style={styles.input}
           placeholder="Search"
@@ -222,6 +225,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </View>
         </View>
       )}
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Tags</Text>
         <Tags tags={uniqueTags} onSelectTag={handleTagSelect} />
@@ -230,7 +234,7 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       {fetchedRecipes.length > 0 ? (
         <View style={styles.recipesContainer}>
           {fetchedRecipes.map((recipe) => (
-            <RecipeCard
+            <RecipeCardSearch
               key={recipe.recipe_id}
               recipe={recipe}
               onFavoriteToggle={() => handleFavoriteToggle(recipe.recipe_id)}
@@ -240,7 +244,9 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           ))}
         </View>
       ) : (
-        noResultsMessage && <Text>{noResultsMessage}</Text>
+        noResultsMessage && (
+          <Text style={styles.noResultsText}>{noResultsMessage}</Text>
+        )
       )}
     </ScrollView>
   );
@@ -248,7 +254,6 @@ const SearchScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: "#fff",
     paddingTop: 40,
   },
@@ -259,8 +264,9 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
     marginHorizontal: 15,
   },
   input: {
@@ -295,15 +301,22 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
   },
-  section: { marginVertical: 10, padding: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
+  section: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingVertical: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
   searchItem: {
-    // paddingHorizontal: 10,
     borderColor: "#ddd",
     flex: 1,
   },
   closeIcon: {
-    // paddingHorizontal: 10,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -312,8 +325,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   recipesContainer: {
-    marginVertical: 10,
-    padding: 10,
+    marginBottom: 50,
+    paddingHorizontal: 15,
     backgroundColor: "#fff",
     borderRadius: 10,
   },
