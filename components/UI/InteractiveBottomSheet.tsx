@@ -112,7 +112,7 @@ const InteractiveBottomSheet: React.FC = () => {
   const handleSubmit = async () => {
     console.log("Form Data:", formData);
     try {
-      const response = await fetch("http://127.0.0.1:5000/recommend", {
+      const response = await fetch("http://192.168.1.138:5000/recommend", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
