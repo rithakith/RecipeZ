@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../navigation/AuthContext";
 import { Linking } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 // Enable WebBrowser for authentication sessions
 WebBrowser.maybeCompleteAuthSession();
@@ -20,7 +21,8 @@ WebBrowser.maybeCompleteAuthSession();
 const CLIENT_ID = "SgfaNj1qXJGFCaIOkmdhj020Zmsa";
 const url = process.env.EXPO_PUBLIC_API_URL;
 
-export default function Auth({ navigation }) {
+export default function Auth() {
+  const navigation = useNavigation();
   const discovery = AuthSession.useAutoDiscovery(
     "https://api.asgardeo.io/t/org606kb/oauth2/token"
   );

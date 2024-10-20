@@ -29,6 +29,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
     // Retrieve stored user data and token on component mount
     const fetchStoredData = async () => {
       await retrieveUserData();
+      setStep(1);
     };
     fetchStoredData();
   }, []);
@@ -207,14 +208,13 @@ const QuestionScreen: React.FC<QuestionScreenProps> = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Display the added ingredients */}
-          <FlatList
-            data={ingredients}
-            renderItem={renderIngredient}
-            keyExtractor={(item, index) => index.toString()}
-            style={styles.ingredientList}
-            contentContainerStyle={styles.ingredientContainer}
-          />
+          <View style={styles.ingredientContainer}>
+            {ingredients.map((item, index) => (
+              <Text key={index} style={styles.ingredientItem}>
+                {item}
+              </Text>
+            ))}
+          </View>
         </View>
       ) : (
         <View style={styles.answerSection}>
@@ -395,7 +395,8 @@ const styles = StyleSheet.create({
   ingredientContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    justifyContent: "center", // Center the items
+    marginTop: 10,
   },
   ingredientItem: {
     paddingVertical: 10,
