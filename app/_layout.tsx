@@ -6,13 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import {
   BottomSheetModal,
-  // BottomSheetView,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-// import BottomSheet from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import LandingScreen from "@/components/Screens/LandingScreen";
 import HomeScreen from "@/components/Screens/HomeScreen";
 import IngredientsScreen from "@/components/Screens/IngredientsScreen";
 import SearchScreen from "@/components/Screens/SearchScreen";
@@ -21,11 +18,34 @@ import DetailInquiryScreen from "@/components/Screens/DetailInquiryScreen";
 import QuestionScreen from "@/components/Screens/QuestionScreen";
 import InteractiveBottomSheet from "@/components/UI/InteractiveBottomSheet";
 import ProfileScreen from "@/components/Screens/ProfileScreen";
-
 import AuthScreen from "@/components/Screens/AuthScreen";
 
+// Define a type for the recipe data
+type Recipe = {
+  recipe_id: number;
+  title: string;
+  images: string;
+  cook_time: number;
+  rating: number;
+  reviews: number;
+  description: string;
+  nutrition: {
+    carbohydrates: number;
+    protein: number;
+    calories: number;
+    fat: number;
+  };
+  ingredients: {
+    name: string;
+    unit: string;
+    quantity: number;
+    preparation?: string;
+  }[];
+  steps: string[];
+};
+
 type RootStackParamList = {
-  Landing: undefined;
+  Auth: undefined;
   Home: undefined;
   Ingredients: { recipe: any };
   RecipeCollection: { recipe: Recipe[]; title: any };
@@ -169,7 +189,7 @@ const linking = {
   prefixes: ["com.ritzy0717.RecipeZ://", "http://localhost:8081"],
   config: {
     screens: {
-      Landing: "landing",
+      Auth: "auth",
       Home: "home",
       DetailInquiry: "detail-inquiry",
       QuestionScreen: "questions",
@@ -183,11 +203,6 @@ const Layout: React.FC = () => (
       <Stack.Screen
         name="Auth"
         component={AuthScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Landing"
-        component={LandingScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

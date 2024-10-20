@@ -170,9 +170,18 @@ export default function Auth({ navigation }) {
       console.log("Checking for stored token:", token);
       if (token) {
         const decodedToken = jwtDecode(token);
-        console.log("Decoded stored token:", decodedToken);
-        setDecodedIdToken(decodedToken);
-        navigation.navigate("DetailInquiry");
+
+        // Check if token has expired
+        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+        if (decodedToken.exp && decodedToken.exp > currentTime) {
+          console.log("Token is still valid, navigating to DetailInquiry");
+          setDecodedIdToken(decodedToken);
+          navigation.navigate("DetailInquiry");
+        } else {
+          console.log("Token has expired, user needs to log in");
+          // If token expired, you might want to remove it and prompt the user to log in
+          await AsyncStorage.removeItem("authToken");
+        }
       }
     } catch (err) {
       console.log("Error checking for token:", err);
