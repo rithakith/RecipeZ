@@ -127,7 +127,7 @@ const SearchStack: React.FC = () => {
 
 const TabNavigator: React.FC = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["30%", "60%"], []);
+  const snapPoints = useMemo(() => ["60%"], []);
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);

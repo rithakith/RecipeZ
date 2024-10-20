@@ -124,8 +124,7 @@ const InteractiveBottomSheet: React.FC = () => {
           suggestions: formData.suggestions,
         }),
       });
-
-      // console.log("Response:", response);
+      console.log("Response:", response);
 
       if (response.ok) {
         const data = await response.json(); // Parse JSON response
