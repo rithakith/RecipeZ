@@ -42,9 +42,6 @@ const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [token, setToken] = useState(null);
-  const [recipes, setRecipes] = useState<Recipe[]>([]); // State to store recipes
-  const [favorites, setFavorites] = useState<Set<number>>(new Set());
 
   // Fetch data when the screen is focused
   useFocusEffect(
@@ -209,16 +206,16 @@ const ProfileScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.infoContainer}>
+        {/* <View style={styles.infoContainer}>
           <Text style={styles.label}>Favorited Recipes:</Text>
           <Text style={styles.value}>
             {user?.favorited_recipes?.length > 0
               ? user.favorited_recipes.join(", ")
               : "No favorite recipes"}
           </Text>
-        </View>
+        </View> */}
 
-        <View style={styles.favouriteSection}>
+        {/* <View style={styles.favouriteSection}>
           <Text style={styles.favouriteTitle}>Favourite</Text>
           <ScrollView
             horizontal
@@ -241,7 +238,7 @@ const ProfileScreen: React.FC = () => {
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );
@@ -251,6 +248,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     backgroundColor: "#fff",
     paddingBottom: 30,
+    height: "100%",
   },
   container: {
     display: "flex",

@@ -138,6 +138,7 @@ const InteractiveBottomSheet: React.FC = () => {
       }
     } catch (err) {
       // Handle error
+      console.error("Error fetching recipes:", err);
     }
   };
 
